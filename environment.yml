@@ -1,0 +1,27 @@
+# Notes on the project environment (Phase 0).
+#
+# The environment is mySC4001, created from the course file on TC1:
+#   /tc1apps/3_conda_yml/SC4001.yml
+# The guide lists its shared counterpart as Python 3.12.3, PyTorch 2.5.1,
+# PyTorch-CUDA 11.8 and Jupyter. The yml itself has not been inspected yet.
+#
+# The list below is what this project adds on top. Versions are not pinned yet
+# because they have not been tested on TC1. Do not run "conda env update" with
+# this file, because it could replace the course PyTorch build. Install with the
+# command in README.md, which uses --freeze-installed.
+#
+# Once the model set is chosen, replace this file with the real versions:
+#   conda env export -n mySC4001 > environment.yml
+name: mySC4001
+channels:
+  - conda-forge
+dependencies:
+  - transformers
+  - accelerate
+  - pillow
+  - pyyaml
+  - pandas
+  - scipy
+  - scikit-learn
+  - matplotlib
+  - pytest

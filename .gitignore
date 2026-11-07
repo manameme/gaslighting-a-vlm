@@ -1,0 +1,19 @@
+# Data is not committed (see README): POPE json, COCO images
+data/*
+!data/.gitkeep
+
+# TC1 user guide is marked [RESTRICTED]: keep it out of git and the ZIP
+CCDSGPU-TC1-UG-UserGuide.pdf
+
+# SLURM logs
+output_*.out
+error_*.err
+
+# Python and tooling
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+.DS_Store
+.vscode/
+.claude/
