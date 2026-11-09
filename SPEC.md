@@ -2,6 +2,14 @@
 
 Companion to `CLAUDE.md`. Build in the phase order given there. Every function below should have a unit test on the mock model where feasible.
 
+## Changes on 2026-11-10 (these override the sections below)
+- **Compute:** Kaggle T4 GPUs instead of TC1. Section 11 (SLURM) no longer applies. The runner is `scripts/kaggle_runner.ipynb`. Run scripts take `--shard k/n` and write under `RESULTS_DIR`.
+- **Scope cut:** about 500 questions per POPE split, 1 to 2 models, fp16 or 4-bit. Crop consistency (section 6), and contrastive decoding (section 9), are dropped.
+- **POPE format, as inspected:** each file is JSON Lines with keys `question_id`, `image`, `text`, `label`. There is no object field, so the object is parsed from `text` ("Is there a/an X in the image?"; all 9,000 rows match). `question_id` restarts at 1 in each file, so rows use `uid = "<pope_split>:<question_id>"`. All three files use the same 500 COCO images, each with 3 yes and 3 no questions; the yes questions are identical across files and only the no questions differ.
+- **Consequence for splits (section 2):** because every image is in every POPE split, an image-level split is automatically stratified by POPE split.
+- **Subsample (section 1):** for each POPE split, each of the 500 images contributes exactly one question. Within each partition and POPE split, half the images get a yes question and half a no question (seeded). An image never gets the same yes question in two POPE splits, so no question is computed twice. This gives 500 questions per POPE split, 1,500 in total, over 500 images; dev is 40% of images (about 600 questions). Spreading questions over many images helps the image-clustered bootstrap. `n_images` in `configs/data.yaml` shrinks this if needed.
+- **Pinned data source:** POPE files from github.com/AoiDragon/POPE at commit `109985c74a00a88ba5341f9b0c1d4900f2a1f789` (MIT licence).
+
 ## 0. Definitions
 - Question q: a POPE item (image, object, ground-truth label in {yes, no}).
 - Turn 1: model answers "Is there a {object} in the image? Answer yes or no."

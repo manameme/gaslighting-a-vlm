@@ -1,0 +1,8 @@
+partition,pope_split,n_questions,n_yes,n_no,n_images
+dev,random,200,100,100,200
+dev,popular,200,100,100,200
+dev,adversarial,200,100,100,200
+test,random,300,150,150,300
+test,popular,300,150,150,300
+test,adversarial,300,150,150,300
+check,images_in_both_dev_and_test,,,,0

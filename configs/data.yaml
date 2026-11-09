@@ -1,0 +1,19 @@
+# Data sources and the dev/test split. Paths are relative to DATA_DIR
+# (env var, default <repo>/data).
+
+# POPE (MIT licence), pinned to one commit so the files never change under us.
+pope_commit: 109985c74a00a88ba5341f9b0c1d4900f2a1f789
+pope_url: https://raw.githubusercontent.com/AoiDragon/POPE/{commit}/output/coco/coco_pope_{split}.json
+pope_dir: pope
+
+# COCO val2014 images. Only the 500 images POPE references are downloaded.
+# The host did not answer over https when checked (2026-11-10), so http is used
+# and every image is checked by decoding it.
+coco_url: http://images.cocodataset.org/val2014/{file}
+image_dir: coco_val2014
+
+# Split. splits.json is committed (see .gitignore) so every machine uses the same one.
+splits_file: splits.json
+seed: 0
+dev_fraction: 0.4
+n_images: null  # null = all 500 images = 500 questions per POPE split

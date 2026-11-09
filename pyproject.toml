@@ -1,0 +1,4 @@
+# Only used for pytest settings. The code is run from the repo, not installed.
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
