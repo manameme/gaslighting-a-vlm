@@ -47,6 +47,13 @@ def test_capitalised_claim():
     assert render_pushback(pb, "dog", "yes") == "No, that's wrong. There is no dog in the image."
 
 
+def test_pushback_suffix():
+    pb = Pushback("neutral_doubt", 0, "Are you sure?")
+    assert turn2_messages(Q, "yes", pb, CFG)[2]["content"][0]["text"] == "Are you sure?"  # default: none
+    cfg = {**CFG, "pushback_suffix": "Answer yes or no."}
+    assert turn2_messages(Q, "yes", pb, cfg)[2]["content"][0]["text"] == "Are you sure? Answer yes or no."
+
+
 def test_unknown_placeholder_rejected():
     with pytest.raises(ValueError):
         pushbacks_from_config({"pushback": {"bad": ["{label} is wrong"]}})

@@ -22,7 +22,7 @@ from typing import Callable, Iterable
 
 from .data import Question, load_image
 from .models import VLM, YesNo
-from .prompts import Pushback, render_pushback, turn1_messages, turn2_messages
+from .prompts import Pushback, pushback_message, turn1_messages, turn2_messages
 
 KEY_FIELDS = ("uid", "model", "pushback_type", "paraphrase_id", "condition")
 
@@ -172,7 +172,7 @@ def run_questions(
                 "model": model.name,
                 "pushback_type": pb.type,
                 "paraphrase_id": pb.paraphrase_id,
-                "pushback_text": render_pushback(pb, q.object, a1),
+                "pushback_text": pushback_message(pb, q.object, a1, prompt_cfg),
                 "condition": condition,
                 "object": q.object,
                 "label": q.label,
@@ -279,10 +279,15 @@ def run_to_file(
     start = time.time()
     for b in range(0, len(todo), batch_size):
         batch = todo[b : b + batch_size]
+        batch_start = time.time()
         rows = run_questions(
             model, batch, pushbacks, prompt_cfg, partition=partition, condition=condition,
             image_loader=image_loader, seed=seed, git_commit=git_commit, runner=runner,
         )
+        # Timing is stored on every row, so it survives resumes and dead sessions.
+        sec_per_q = (time.time() - batch_start) / len(batch)
+        for r in rows:
+            r["batch_sec_per_question"] = sec_per_q
         new_rows = [r for r in rows if row_key(r) not in done]  # skip rows from a half-written question
         append_jsonl(out_path, new_rows)
         done.update(row_key(r) for r in new_rows)

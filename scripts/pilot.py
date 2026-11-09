@@ -52,11 +52,14 @@ def show_examples(model, setup, rows, n_show):
 
 
 def update_pilot_csv(path: Path, row: dict) -> None:
-    """Replace this model's line in pilot.csv, keeping the other models' lines."""
+    """Replace this (model, variant) line in pilot.csv, keeping the other lines."""
     rows = []
     if path.exists():
         with open(path) as f:
-            rows = [r for r in csv.DictReader(f) if r["model"] != row["model"]]
+            rows = [
+                r for r in csv.DictReader(f)
+                if (r["model"], r.get("variant", "")) != (row["model"], row["variant"])
+            ]
     rows.append(row)
     fields = list(row)
     with open(path, "w", newline="") as f:
@@ -72,15 +75,21 @@ def main() -> None:
     parser.add_argument("--n", type=int, help="number of dev questions (default from experiment.yaml)")
     parser.add_argument("--batch-size", type=int, help="override the model config")
     parser.add_argument("--resume", action="store_true")
+    parser.add_argument("--pushback-suffix", help='text added to every pushback, e.g. "Answer yes or no."')
+    parser.add_argument("--tag", default="", help="variant name: goes into the file name and the variant column")
     args = parser.parse_args()
+    if args.pushback_suffix and not args.tag:
+        parser.error("--pushback-suffix needs --tag, so the variant gets its own file")
 
     model_cfg = load_yaml(args.model_config)
     setup = prepare_dev_run(args.experiment, model_cfg, stage="pilot")
+    if args.pushback_suffix is not None:
+        setup["prompt_cfg"]["pushback_suffix"] = args.pushback_suffix
     pilot_cfg = setup["exp"]["pilot"]
     setup["questions"] = setup["questions"][: args.n or pilot_cfg["n_questions"]]
 
     model = load_model(model_cfg)
-    out = results_dir() / f"pilot_dev_{model.name}.jsonl"
+    out = results_dir() / f"pilot_dev_{model.name}{'_' + args.tag if args.tag else ''}.jsonl"
     stats = run_to_file(
         model, setup["questions"], setup["pushbacks"], setup["prompt_cfg"], out,
         partition="dev", resume=args.resume, batch_size=args.batch_size or model_cfg["batch_size"],
@@ -93,9 +102,12 @@ def main() -> None:
     rows = [r for r in read_rows(out) if r["uid"] in wanted]
     show_examples(model, setup, rows, pilot_cfg["show"])
 
-    summary = {"model": model.name, **flip_summary(rows)}
-    # Timing only exists for questions run in this call.
-    summary["sec_per_question"] = stats["sec_per_question"]
+    summary = {"model": model.name, "variant": args.tag, **flip_summary(rows)}
+    summary["pushback_suffix"] = setup["prompt_cfg"].get("pushback_suffix", "")
+    # Mean over questions of the per-batch timing stored on each row.
+    # Includes image loading and the first (slower, warm-up) batch.
+    per_q = {r["uid"]: r["batch_sec_per_question"] for r in rows if "batch_sec_per_question" in r}
+    summary["sec_per_question"] = sum(per_q.values()) / len(per_q) if per_q else None
     summary["prompts_per_question"] = 1 + len(setup["pushbacks"])
     summary["git_commit"] = setup["git_commit"]
     update_pilot_csv(results_dir() / "pilot.csv", summary)

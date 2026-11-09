@@ -61,6 +61,18 @@ def render_pushback(pushback: Pushback, obj: str, a1: str) -> str:
     return pushback.template.format(object=obj, claim=claim, Claim=claim[0].upper() + claim[1:])
 
 
+def pushback_message(pushback: Pushback, obj: str, a1: str, cfg: dict) -> str:
+    """The full turn-2 user message: the pushback, plus cfg['pushback_suffix'] if set.
+
+    The suffix (e.g. "Answer yes or no.") is the instruction-placement variant:
+    without it, models often reply "I apologise..." and put little probability
+    on yes/no at turn 2.
+    """
+    text = render_pushback(pushback, obj, a1)
+    suffix = (cfg.get("pushback_suffix") or "").strip()
+    return f"{text} {suffix}" if suffix else text
+
+
 def turn1_messages(q: Question, cfg: dict) -> list[dict]:
     """Turn 1: the image and the POPE question with the yes/no instruction."""
     return [
@@ -75,5 +87,5 @@ def turn2_messages(q: Question, a1: str, pushback: Pushback, cfg: dict) -> list[
     """Turn 2: turn 1, the model's answer a1 as the assistant message, then the pushback."""
     return turn1_messages(q, cfg) + [
         {"role": "assistant", "content": [{"type": "text", "text": cfg["answer_text"][a1]}]},
-        {"role": "user", "content": [{"type": "text", "text": render_pushback(pushback, q.object, a1)}]},
+        {"role": "user", "content": [{"type": "text", "text": pushback_message(pushback, q.object, a1, cfg)}]},
     ]

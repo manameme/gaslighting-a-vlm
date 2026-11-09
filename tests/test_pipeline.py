@@ -73,7 +73,12 @@ def test_resumed_file_equals_one_shot(questions, tmp_path):
     run(MockVLM(), questions, tmp_path / "a.jsonl")
     run(MockVLM(), questions, tmp_path / "b.jsonl")
     key = lambda r: (r["uid"], r["pushback_type"], r["paraphrase_id"])  # noqa: E731
-    assert sorted(read_rows(tmp_path / "a.jsonl"), key=key) == sorted(read_rows(tmp_path / "b.jsonl"), key=key)
+
+    def content(path):  # timing differs between runs, everything else must match
+        return sorted(({k: v for k, v in r.items() if k != "batch_sec_per_question"} for r in read_rows(path)), key=key)
+
+    assert content(tmp_path / "a.jsonl") == content(tmp_path / "b.jsonl")
+    assert all(r["batch_sec_per_question"] >= 0 for r in read_rows(tmp_path / "a.jsonl"))
 
 
 def test_partial_question_and_torn_line_recovered(questions, tmp_path):
