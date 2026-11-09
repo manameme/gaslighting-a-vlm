@@ -1,27 +1,22 @@
-# Notes on the project environment (Phase 0).
+# Environment notes (no conda environment is used since the move to Kaggle).
 #
-# The environment is mySC4001, created from the course file on TC1:
-#   /tc1apps/3_conda_yml/SC4001.yml
-# The guide lists its shared counterpart as Python 3.12.3, PyTorch 2.5.1,
-# PyTorch-CUDA 11.8 and Jupyter. The yml itself has not been inspected yet.
+# GPU runs (Kaggle notebook): Kaggle's preinstalled PyTorch, plus these pins,
+# installed by scripts/kaggle_runner.ipynb:
+#   transformers==4.57.6  accelerate==1.10.1  bitsandbytes==0.49.2
+# The exact versions used (including torch) are printed by the notebook and
+# written into the "_meta" header line of every result file.
 #
-# The list below is what this project adds on top. Versions are not pinned yet
-# because they have not been tested on TC1. Do not run "conda env update" with
-# this file, because it could replace the course PyTorch build. Install with the
-# command in README.md, which uses --freeze-installed.
+# CPU tests (laptop): python3 -m venv .venv
+#                     ./.venv/bin/pip install numpy pyyaml pillow pytest
 #
-# Once the model set is chosen, replace this file with the real versions:
-#   conda env export -n mySC4001 > environment.yml
-name: mySC4001
+# Kept as a conda file so `conda env create -f environment.yml` also works for
+# the CPU tests if anyone prefers conda.
+name: vlmsyc-cpu
 channels:
   - conda-forge
 dependencies:
-  - transformers
-  - accelerate
-  - pillow
+  - python>=3.10
+  - numpy
   - pyyaml
-  - pandas
-  - scipy
-  - scikit-learn
-  - matplotlib
+  - pillow
   - pytest

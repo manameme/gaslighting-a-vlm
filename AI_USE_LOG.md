@@ -13,3 +13,19 @@ Record of what Claude Code was used for in each session and what the team verifi
 **Team verification:**
 - [ ] Smoke job run on TC1 and its output reviewed
 - [ ] Team has read and can explain `slurm/job_smoke.sh`
+
+## 2026-11-10: Move to Kaggle; Phases 1–2; Kaggle runner
+
+**Claude Code was used for:**
+- Rewriting the compute section of `CLAUDE.md` for Kaggle and recording the scope cut in `CLAUDE.md` and `SPEC.md`
+- Inspecting the POPE files (format, labels, images shared across splits) before writing the loader
+- Checking Hugging Face licence, gating and revisions for the candidate models
+- Writing `data.py`, `splits.py`, `prompts.py`, `models.py` (with `MockVLM`), `pipeline.py`, `metrics.py`, `paths.py`, the scripts and the configs
+- Writing 43 CPU tests and dry-running every script with the mock model on the real dev data
+- Generating `scripts/kaggle_runner.ipynb`. Only its dev-loop cell was run locally, with the mock model. The rest is untested until it runs on Kaggle.
+
+**Team verification:**
+- [ ] Read the subsample design (SPEC.md "Changes") and `results/splits_summary.csv`
+- [ ] Read the pushback templates in `configs/pushback.yaml`
+- [ ] Hand-check the 5 printed pilot examples per model (exact prompt, p(yes), p(no), a1, a2)
+- [ ] Can explain `models.py` (yes/no from logits) and `pipeline.py` (resume, shards)
