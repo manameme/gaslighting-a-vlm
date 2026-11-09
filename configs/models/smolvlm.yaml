@@ -1,0 +1,13 @@
+# SmolVLM-Instruct (2B, Idefics3 architecture). Apache-2.0, not gated (checked 2026-11-10).
+# Optional third candidate for the pilot.
+name: smolvlm
+hf_id: HuggingFaceTB/SmolVLM-Instruct
+revision: 81cd9a775a4d644f2faf4e7becff4559b46b14c7
+quant: none
+batch_size: 8
+max_image_side: 768
+# Longest edge 768 = 2 x 384 tiles per side (the model card's suggested way to limit tokens).
+processor_kwargs:
+  size:
+    longest_edge: 768
+nested_images: true    # Idefics3 processor wants one list of images per prompt

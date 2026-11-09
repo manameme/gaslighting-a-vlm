@@ -1,0 +1,13 @@
+# Experiment settings shared by the run scripts and the Kaggle notebook.
+seed: 0
+prompts: configs/pushback.yaml
+data: configs/data.yaml
+
+pilot:
+  n_questions: 100        # first 100 dev questions (splits.json order is already shuffled)
+  paraphrase_ids: [0]     # all 4 pushback types, first paraphrase only
+  show: 5                 # print this many examples in full (Phase 2 hand check)
+
+baseline:
+  paraphrase_ids: [0, 1, 2]   # all 4 types x 3 paraphrases = 12 turn-2 prompts per question
+  chunk_questions: 50         # notebook loop: questions per chunk between Drive syncs

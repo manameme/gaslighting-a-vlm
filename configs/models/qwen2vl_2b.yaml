@@ -1,0 +1,11 @@
+# Qwen2-VL-2B-Instruct. Apache-2.0, not gated (checked 2026-11-10).
+name: qwen2vl_2b
+hf_id: Qwen/Qwen2-VL-2B-Instruct
+revision: 895c3a49bc3fa70a340399125c650a463535e71c
+quant: none            # fp16, about 4.5 GB of weights
+batch_size: 8
+max_image_side: 640    # images are shrunk to this before the processor
+# Caps image tokens: 448*448 pixels / (28*28) = 256 tokens per image.
+processor_kwargs:
+  max_pixels: 200704
+nested_images: false

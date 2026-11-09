@@ -1,0 +1,12 @@
+# LLaVA-1.5-7B (hf format). Llama 2 licence, not gated (checked 2026-11-10).
+# 4-bit NF4 weights with fp16 compute, so it fits on a 16 GB T4.
+# Note: MM-SY reports LLaVA-1.5 flipping ~95% in its multiple-choice setup;
+# the pilot checks whether it saturates here.
+name: llava15_7b_4bit
+hf_id: llava-hf/llava-1.5-7b-hf
+revision: b234b804b114d9e37bb655e11cbbb5f5e971b7a9
+quant: 4bit
+batch_size: 8
+max_image_side: 640    # the processor resizes to 336 anyway
+processor_kwargs: {}
+nested_images: false

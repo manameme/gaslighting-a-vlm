@@ -1,0 +1,6 @@
+# Fake model for CPU tests and for dry runs of the scripts on a laptop.
+# Its numbers mean nothing; never report them.
+name: mock
+hf_id: mock
+batch_size: 8
+max_image_side: 64
