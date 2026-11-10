@@ -206,3 +206,35 @@ def describe_learned_gate(model, features: list[str]) -> dict:
         "intercept": float(lr.intercept_[0]),
         "score": "P(good revision) = sigmoid(intercept + sum(coef * (x - mean) / scale))",
     }
+
+
+# ---------- combining the two models (analysis_plan.md, Amendment B) ----------
+
+
+def ci_side(lo: float | None, hi: float | None) -> str:
+    """'above' if the CI is entirely above 0, 'below' if entirely below, else 'includes0'."""
+    if lo is not None and lo > 0:
+        return "above"
+    if hi is not None and hi < 0:
+        return "below"
+    return "includes0"
+
+
+def overall_h2(sides: list[str]) -> str:
+    """Amendment B2. sides: one ci_side() per model for the B-minus-A AUROC difference."""
+    n_above = sides.count("above")
+    if n_above == len(sides):
+        return "supported"
+    if n_above >= 1 and "below" in sides:
+        return "reversal (report both models; no pooled claim)"
+    if n_above >= 1:
+        return "mixed"
+    return "not supported"
+
+
+def overall_h3(per_model_supported: list[bool]) -> str:
+    """Amendment B1. per_model_supported: whether both section-8 conditions hold, per model."""
+    n = sum(per_model_supported)
+    if n == len(per_model_supported):
+        return "supported"
+    return "mixed" if n >= 1 else "not supported"

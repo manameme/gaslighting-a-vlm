@@ -85,3 +85,19 @@ def test_pushback_one_hot_and_frozen_apply_matches_sklearn():
     entry = describe_learned_gate(model, ["conf1", "shift_to_claim", "pushback_type"])
     assert entry["columns"][2:] == ["pushback_type=assertive", "pushback_type=authority", "pushback_type=polite"]
     np.testing.assert_allclose(apply_frozen_learned_gate(entry, X), model.predict_proba(X)[:, 1], rtol=1e-9)
+
+
+def test_amendment_b_combining_rules():
+    from vlmsyc.gates import ci_side, overall_h2, overall_h3
+    assert ci_side(0.01, 0.05) == "above" and ci_side(-0.05, -0.01) == "below" and ci_side(-0.01, 0.02) == "includes0"
+    assert ci_side(None, None) == "includes0"
+    assert overall_h2(["above", "above"]) == "supported"
+    assert overall_h2(["above", "includes0"]) == "mixed"
+    assert overall_h2(["includes0", "above"]) == "mixed"
+    assert overall_h2(["above", "below"]).startswith("reversal")
+    assert overall_h2(["below", "above"]).startswith("reversal")
+    for sides in (["includes0", "includes0"], ["includes0", "below"], ["below", "below"]):
+        assert overall_h2(sides) == "not supported"
+    assert overall_h3([True, True]) == "supported"
+    assert overall_h3([True, False]) == "mixed" and overall_h3([False, True]) == "mixed"
+    assert overall_h3([False, False]) == "not supported"

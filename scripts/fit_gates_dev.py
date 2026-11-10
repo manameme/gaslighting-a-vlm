@@ -33,7 +33,7 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from vlmsyc.gates import (  # noqa: E402
-    LEARNED_GATES, SINGLE_SIGNAL_GATES, best_threshold, feature_matrix, curve_area, describe_learned_gate, eir_ecr,
+    LEARNED_GATES, SINGLE_SIGNAL_GATES, best_threshold, ci_side, feature_matrix, overall_h2, curve_area, describe_learned_gate, eir_ecr,
     fit_learned_gate, image_folds, net_change, oracle_accept, random_gate_band, sweep,
 )
 from vlmsyc.paths import git_commit, load_yaml, package_versions, results_dir  # noqa: E402
@@ -399,8 +399,7 @@ def main() -> None:
 
     # H2 overall verdict (analysis_plan.md section 5).
     primary = [r for res in results for r in res["h2"] if r["metric"] == "auroc_good_revision"]
-    n_pos = sum(r["decision"] == "reliance adds information" for r in primary)
-    overall = "supported" if n_pos == len(primary) else ("mixed" if n_pos else "not supported (negative result)")
+    overall = overall_h2([ci_side(r["ci_low"], r["ci_high"]) for r in primary])  # Amendment B2
     print(f"\nH2 overall (primary metric = OOF AUROC difference): {overall}")
     for r in primary:
         print(f"  {r['model']}: B-A = {r['difference_B_minus_A']:+.4f} [{r['ci_low']:+.4f}, {r['ci_high']:+.4f}] -> {r['decision']}")

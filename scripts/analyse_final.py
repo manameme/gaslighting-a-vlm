@@ -35,7 +35,8 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from vlmsyc.gates import (  # noqa: E402
-    HEADLINE_GATES, LEARNED_GATES, SINGLE_SIGNAL_GATES, apply_frozen_learned_gate, curve_area, eir_ecr,
+    HEADLINE_GATES, LEARNED_GATES, SINGLE_SIGNAL_GATES, apply_frozen_learned_gate, ci_side, curve_area, eir_ecr,
+    overall_h2, overall_h3,
     feature_matrix, net_change, oracle_accept, random_gate_band, sweep,
 )
 from vlmsyc.paths import REPO_ROOT, load_yaml, results_dir  # noqa: E402
@@ -380,16 +381,29 @@ def run(partition: str, final: bool, in_dir: Path, out_dir: Path, fig_dir: Path,
     for key, name in [("gates", "gates.csv"), ("refs", "references.csv"), ("auroc", "auroc.csv"), ("h2", "h2.csv"),
                       ("h3", "h3.csv"), ("mit", "mitigations.csv"), ("by_a1", "by_a1.csv")]:
         write_csv(out_dir / name, [r for m in models for r in results[m][key]], overwrite_ok)
+    # Overall labels across the two models (analysis_plan.md, Amendment B).
     primary = [r for m in models for r in results[m]["h2"] if r["primary"]]
-    n_pos = sum(r["decision"] == "reliance adds information" for r in primary)
-    meta["h2_overall"] = "supported" if n_pos == len(primary) else ("mixed" if n_pos else "not supported")
+    meta["h2_per_model"] = {r["model"]: {"difference_B_minus_A": r["difference_B_minus_A"], "ci": [r["ci_low"], r["ci_high"]],
+                                         "decision": r["decision"]} for r in primary}
+    meta["h2_overall"] = overall_h2([ci_side(r["ci_low"], r["ci_high"]) for r in primary])
+    h3_per_model = {m: next(r["gate"] for r in results[m]["h3"] if r["row"] == "verdict") == "supported" for m in models}
+    meta["h3_per_model"] = {m: ("supported" if ok else "NOT supported") for m, ok in h3_per_model.items()}
+    meta["h3_overall"] = overall_h3(list(h3_per_model.values()))
     meta_path = out_dir / "run_info.json"
     if meta_path.exists() and not overwrite_ok:
         raise FileExistsError(f"{meta_path} exists")
     meta_path.write_text(json.dumps(meta, indent=2))
     title = "FINAL (test)" if partition == "test" else "DRY RUN on dev (in-sample, not a result)"
     make_figures(results, fig_dir, title, overwrite_ok)
-    print(f"H2 overall: {meta['h2_overall']}")
+    print("H2 per model (B - A, frozen gates):")
+    for m, v in meta["h2_per_model"].items():
+        lo, hi = v["ci"]
+        ci = f"[{lo:+.3f}, {hi:+.3f}]" if lo is not None and hi is not None else "[undefined]"
+        diff = f"{v['difference_B_minus_A']:+.3f}" if v["difference_B_minus_A"] is not None else "undefined"
+        print(f"  {m}: {diff} {ci} -> {v['decision']}")
+    print(f"H2 overall (Amendment B2): {meta['h2_overall']}")
+    print(f"H3 per model: {meta['h3_per_model']}")
+    print(f"H3 overall (Amendment B1): {meta['h3_overall']}")
     return meta
 
 
