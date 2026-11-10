@@ -384,6 +384,8 @@ def main() -> None:
     exp = load_yaml(args.experiment)
     n_boot = args.n_boot or exp["signals"]["n_boot"]
     seed = exp["seed"]
+    # Read the commit before writing anything, or our own new files mark the tree dirty.
+    commit = git_commit()
 
     results = [analyse(m, n_boot, seed) for m in args.models]
     out = results_dir()
@@ -407,7 +409,7 @@ def main() -> None:
 
     frozen = {
         "_note": "Fit on the dev split only (scripts/fit_gates_dev.py). Apply unchanged to test in run_final.py --final.",
-        "git_commit": git_commit(), "seed": seed, "k_folds": K_FOLDS, "n_boot": n_boot,
+        "git_commit": commit, "seed": seed, "k_folds": K_FOLDS, "n_boot": n_boot,
         "versions": package_versions(), "analysis_plan": "results/analysis_plan.md",
         "h2_overall": overall,
         "models": {res_model: res["frozen"] for res_model, res in zip(args.models, results)},
