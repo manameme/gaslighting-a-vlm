@@ -18,3 +18,6 @@ __pycache__/
 .DS_Store
 .vscode/
 .claude/
+
+# TC1 copies carry the commit in this file when .git is absent
+.git_commit
