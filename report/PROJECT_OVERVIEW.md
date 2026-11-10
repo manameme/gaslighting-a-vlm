@@ -1,6 +1,6 @@
 # When should a VLM accept a user's correction?
 
-**Project overview, as of 10 Nov 2026, 23:00 SGT.** NTU SC4001 group project, Direction E: hallucination and reliability in VLMs. Deadline: **16 Nov 2026, 11:59 PM**.
+**Project overview, as of 10 Nov 2026, 23:15 SGT.** NTU SC4001 group project, Direction E: hallucination and reliability in VLMs. Deadline: **16 Nov 2026, 11:59 PM**.
 
 Every number in this document comes from a file in `results/`, and the file is named next to it. Anything not yet run is marked *pending*.
 
@@ -100,39 +100,69 @@ What we decided from this:
 - **Use LLaVA in fp16**, which fits on the V100, to avoid 4-bit quantisation as a confound. Its flip rate (0.49) is inside the 20–70% target range set for the study.
 - **Cross-check:** the Qwen pilot on TC1 matched an earlier Kaggle T4 run (turn-1 acc. 0.87, flip rate 0.47, turn-2 mass 0.38 on both).
 
-### 5.2 Dev baseline: Qwen2-VL-2B, 600 questions × 12 pushbacks = 7,200 rows (`results/baseline_dev_qwen2vl_2b.jsonl`)
-| | Value |
-|---|---|
-| Turn-1 accuracy | 0.865 (random 0.87, popular 0.86, adversarial 0.865) |
-| Flip rate overall | 0.526 |
-| Flip rate when turn 1 was **right** (= EIR with no gate) | 0.525 |
-| Flip rate when turn 1 was **wrong** (= ECR with no gate) | 0.533 |
-| Turn-2 accuracy | 0.482 |
-| Turn-2 yes/no mass (mean / min) | 0.994 / 0.875 |
+### 5.2 Dev baseline: 600 questions × 12 pushbacks = 7,200 rows per model
+Sources: `results/baseline_dev_qwen2vl_2b.jsonl` and `results/baseline_dev_llava15_7b_fp16.jsonl`.
 
-Flip rate by pushback type: neutral_doubt 0.15, polite 0.61, authority 0.52, assertive 0.82.
-Flip rate by POPE split: random 0.54, popular 0.50, adversarial 0.54.
-
-**Key finding so far:** Qwen gives in about equally often whether it was right or wrong (0.525 vs 0.533). Pushback therefore makes it *less* accurate: 0.865 at turn 1 against 0.482 at turn 2, because 86.5% of turn-1 answers were right to begin with. Accepting every correction is harmful, which is why a gate is needed. Pushback that names a claim is far more effective than "Are you sure?", and an assertive tone is the strongest.
-
-### 5.3 Signals: Qwen2-VL-2B, dev (`results/signals_auroc_dev.csv`)
-AUROC with 95% CIs clustered by image. 0.5 means no information; values below 0.5 mean the signal works in the opposite direction.
-
-| Signal | Predicts a flip (7,200 rows) | Predicts a *good* revision (3,790 flips) |
+| | Qwen2-VL-2B | LLaVA-1.5-7B fp16 |
 |---|---|---|
-| conf1 | 0.317 [0.288, 0.348] | 0.179 [0.137, 0.226] |
-| reliance_blur | 0.711 [0.690, 0.731] | 0.202 [0.146, 0.260] |
-| reliance_blank | 0.558 [0.530, 0.586] | 0.140 [0.101, 0.182] |
-| shift_to_claim | 0.774 [0.752, 0.798] | 0.175 [0.139, 0.213] |
+| Turn-1 accuracy | 0.865 | 0.867 |
+| … random / popular / adversarial | 0.87 / 0.86 / 0.865 | 0.885 / 0.885 / **0.83** |
+| Flip rate overall | 0.526 | 0.469 |
+| Flip rate when turn 1 was **right** (= EIR with no gate) | 0.525 | 0.472 |
+| Flip rate when turn 1 was **wrong** (= ECR with no gate) | 0.533 | 0.450 |
+| Turn-2 accuracy | 0.482 | 0.518 |
+| Turn-2 yes/no mass (mean / min) | 0.994 / 0.875 | 1.000 / 0.998 |
+
+| Flip rate by pushback type | Qwen | LLaVA |
+|---|---|---|
+| neutral_doubt ("Are you sure?") | 0.15 | 0.39 |
+| polite | 0.61 | 0.44 |
+| authority | 0.52 | 0.48 |
+| assertive | 0.82 | 0.57 |
+
+| Flip rate by POPE split | Qwen | LLaVA |
+|---|---|---|
+| random | 0.54 | 0.45 |
+| popular | 0.50 | 0.46 |
+| adversarial | 0.54 | 0.49 |
+
+**Key findings so far:**
+- **Both models give in about equally often whether they were right or wrong:** Qwen 0.525 vs 0.533, LLaVA 0.472 vs 0.450. Since about 87% of turn-1 answers are right, accepting every correction makes both models *less* accurate: turn-1 to turn-2 accuracy goes from 0.865 to 0.482 (Qwen) and from 0.867 to 0.518 (LLaVA). This is the case for gating.
+- **Pushback that names a claim beats "Are you sure?" for both models, and an assertive tone is strongest.** Qwen is much more sensitive to the wording (0.15 to 0.82) than LLaVA (0.39 to 0.57).
+- **LLaVA's turn-1 accuracy is lowest on the adversarial split** (0.83 vs 0.885), as POPE intends. Qwen's is about flat.
+
+### 5.3 Signals on dev (`results/signals_auroc_dev.csv`)
+AUROC with 95% CIs from a bootstrap clustered by image. 0.5 means no information; values below 0.5 mean the signal works in the opposite direction.
+
+**Predicts a flip** (all 7,200 rows per model):
+
+| Signal | Qwen2-VL-2B | LLaVA-1.5-7B fp16 |
+|---|---|---|
+| conf1 | 0.317 [0.288, 0.348] | 0.452 [0.426, 0.480] |
+| reliance_blur | 0.711 [0.690, 0.731] | 0.708 [0.693, 0.722] |
+| reliance_blank | 0.558 [0.530, 0.586] | 0.721 [0.706, 0.733] |
+| shift_to_claim | 0.774 [0.752, 0.798] | 0.920 [0.909, 0.931] |
+
+**Predicts a *good* revision** (only among flips: Qwen 3,790 rows, LLaVA 3,375 rows):
+
+| Signal | Qwen2-VL-2B | LLaVA-1.5-7B fp16 |
+|---|---|---|
+| conf1 | 0.179 [0.137, 0.226] | 0.178 [0.138, 0.219] |
+| reliance_blur | 0.202 [0.146, 0.260] | 0.300 [0.231, 0.366] |
+| reliance_blank | 0.140 [0.101, 0.182] | 0.201 [0.151, 0.249] |
+| shift_to_claim | 0.175 [0.139, 0.213] | 0.170 [0.131, 0.210] |
 
 How to read it:
-- **H1 (confidence predicts flips): supported on Qwen dev.** Confident answers flip less (AUROC 0.32, i.e. 0.68 the other way round).
-- **Every signal is strongly informative about whether a revision is good**, all in the same direction: when the model was confident, image-driven, or moved a lot by the pushback, the revision is usually *wrong*. The flipped AUROCs are about 0.80–0.86. This makes sense: those turn-1 answers were mostly right, so changing them introduces errors.
-- **Interesting:** blur reliance is *positively* related to flipping (0.71). Answers that depend on visual detail are easier to push over, even though they are more likely to be right.
-- **Not yet tested:** whether reliance adds information *beyond* confidence (H2) needs the gate comparison (a learned gate with and without reliance, against the random and oracle gates). Results per POPE split (H3) are in the CSV but not yet analysed.
+- **H1 (confidence predicts flips): supported for Qwen, weak for LLaVA.** Confident answers flip less: AUROC 0.32 for Qwen (0.68 the other way round), but only 0.45 for LLaVA (0.55 the other way round, with a CI that excludes 0.5).
+- **Every signal is strongly informative about whether a revision is good, for both models, all in the same direction.** If the model was confident, image-driven or strongly moved, the revision is usually *wrong*. The flipped AUROCs are about 0.70–0.86. This makes sense: those turn-1 answers were mostly right, so changing them introduces errors.
+- **Image reliance is positively related to flipping for both models** (about 0.71). Answers that depend on the image are easier to push over, even though they are more likely to be right. This is worth a closer look in the report.
+- **`shift_to_claim` predicts flips well, especially for LLaVA (0.92).** This is partly by construction, since a flip is a large shift. It is only usable as a gate input because it is measured before the final answer is accepted.
+- **Not yet tested:** whether reliance adds information *beyond* confidence (H2) needs the gate comparison. Results per POPE split (H3) are in the CSV but not yet analysed.
 
 ### 5.4 Pending
-- LLaVA-1.5-7B fp16 dev baseline and signals: running now (job 73336).
+- Gate comparison (EIR–ECR curves, learned gate, random and oracle bounds) and the per-split H3 analysis.
+
+---
 
 ## 6. Related work (to read and cite)
 These are the papers listed in the project brief. What we say about each must be checked against the paper itself before it goes in the report.
