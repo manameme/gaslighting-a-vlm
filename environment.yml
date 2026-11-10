@@ -1,16 +1,26 @@
-# Environment notes (no conda environment is used since the move to Kaggle).
+# Environment notes. Conda is NOT used for the GPU runs: on TC1, conda fails
+# on the NFS home directory (a symlink loop in the ncurses package), so the GPU
+# environment is a uv venv. Exact pins: requirements-gpu.txt.
 #
-# GPU runs (Kaggle notebook): Kaggle's preinstalled PyTorch, plus these pins,
-# installed by scripts/kaggle_runner.ipynb:
-#   transformers==4.57.6  accelerate==1.10.1  bitsandbytes==0.49.2
-# The exact versions used (including torch) are printed by the notebook and
-# written into the "_meta" header line of every result file.
+# GPU runs (TC1, NTU CCDS cluster, Tesla V100 32 GB, SLURM) -- set up once on
+# the head node (installing packages only; never run code there):
+#   module load python/3.11 uv
+#   export UV_CACHE_DIR=/tmp/$USER-uvcache UV_LINK_MODE=copy  # NFS home has no file locks
+#   uv venv --python "$(which python3.11)" ~/venvs/vlmsyc
+#   source ~/venvs/vlmsyc/bin/activate
+#   uv pip install -r requirements-gpu.txt --index-strategy unsafe-best-match \
+#       --extra-index-url https://download.pytorch.org/whl/cu124
+# The SLURM scripts in slurm/ activate this venv.
+#
+# GPU runs (Kaggle T4 fallback): Kaggle's preinstalled PyTorch plus
+#   transformers==4.57.6 accelerate==1.10.1 bitsandbytes==0.49.2
+# (installed by scripts/kaggle_runner.ipynb).
 #
 # CPU tests (laptop): python3 -m venv .venv
 #                     ./.venv/bin/pip install numpy pyyaml pillow pytest
 #
 # Kept as a conda file so `conda env create -f environment.yml` also works for
-# the CPU tests if anyone prefers conda.
+# the CPU tests if anyone prefers conda on a laptop.
 name: vlmsyc-cpu
 channels:
   - conda-forge

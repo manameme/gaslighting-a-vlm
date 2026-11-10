@@ -159,3 +159,12 @@ def test_flip_summary_hand_computed():
     assert s["n_questions"] == 2 and s["turn1_acc"] == 0.5
     assert s["flip_rate"] == 2 / 3 and s["flip_rate_a1_correct"] == 0.5 and s["flip_rate_a1_wrong"] == 1.0
     assert s["min_mass_t2"] == 0.3
+
+
+def test_resume_refuses_different_suffix(questions, tmp_path):
+    """Row keys do not include the prompt, so a file must not mix two suffix settings."""
+    path = tmp_path / "out.jsonl"
+    run(MockVLM(), questions[:1], path, meta={"pushback_suffix": ""})
+    with pytest.raises(ValueError):
+        run(MockVLM(), questions[:2], path, meta={"pushback_suffix": "Answer yes or no."})
+    run(MockVLM(), questions[:2], path, meta={"pushback_suffix": ""})  # same setting resumes fine

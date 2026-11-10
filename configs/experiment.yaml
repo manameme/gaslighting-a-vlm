@@ -11,3 +11,9 @@ pilot:
 baseline:
   paraphrase_ids: [0, 1, 2]   # all 4 types x 3 paraphrases = 12 turn-2 prompts per question
   chunk_questions: 50         # notebook loop: questions per chunk between Drive syncs
+
+signals:
+  # Gaussian blur sigma as a fraction of the longer image side (about 19 px on a
+  # 640 px image). Fixed before any signal was computed; not tuned.
+  blur_sigma_frac: 0.03
+  n_boot: 1000              # bootstrap resamples (clustered by image) for AUROC CIs

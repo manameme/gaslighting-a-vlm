@@ -75,16 +75,20 @@ def main() -> None:
     parser.add_argument("--n", type=int, help="number of dev questions (default from experiment.yaml)")
     parser.add_argument("--batch-size", type=int, help="override the model config")
     parser.add_argument("--resume", action="store_true")
-    parser.add_argument("--pushback-suffix", help='text added to every pushback, e.g. "Answer yes or no."')
+    parser.add_argument("--pushback-suffix", help='override the config, e.g. "" for no suffix')
     parser.add_argument("--tag", default="", help="variant name: goes into the file name and the variant column")
     args = parser.parse_args()
-    if args.pushback_suffix and not args.tag:
-        parser.error("--pushback-suffix needs --tag, so the variant gets its own file")
 
     model_cfg = load_yaml(args.model_config)
     setup = prepare_dev_run(args.experiment, model_cfg, stage="pilot")
     if args.pushback_suffix is not None:
         setup["prompt_cfg"]["pushback_suffix"] = args.pushback_suffix
+    # File naming kept from the first pilot: no tag = no suffix, "instr" = suffix.
+    # A suffix without a tag would share a file (and resume keys) with no-suffix rows.
+    if setup["prompt_cfg"].get("pushback_suffix") and not args.tag:
+        parser.error('a pushback suffix is active, so give --tag (e.g. --tag instr), '
+                     'or pass --pushback-suffix "" for the no-suffix variant')
+    setup["meta"]["pushback_suffix"] = setup["prompt_cfg"].get("pushback_suffix", "")
     pilot_cfg = setup["exp"]["pilot"]
     setup["questions"] = setup["questions"][: args.n or pilot_cfg["n_questions"]]
 

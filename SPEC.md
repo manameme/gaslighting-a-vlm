@@ -4,6 +4,8 @@ Companion to `CLAUDE.md`. Build in the phase order given there. Every function b
 
 ## Changes on 2026-11-10 (these override the sections below)
 - **Compute:** Kaggle T4 GPUs instead of TC1. Section 11 (SLURM) no longer applies. The runner is `scripts/kaggle_runner.ipynb`. Run scripts take `--shard k/n` and write under `RESULTS_DIR`.
+- **Compute, later the same day:** TC1 became reachable from campus, so the main runs use TC1 (Tesla V100 32 GB, SLURM, section 11 applies again with a uv venv instead of conda). Kaggle stays as a fallback. Job scripts: `slurm/job_pilot.sh`, `slurm/job_baseline.sh`, `slurm/job_signals.sh`.
+- **Models (user decision, 2026-11-10):** Qwen2-VL-2B-Instruct (fp16) and LLaVA-1.5-7B in **fp16** (`configs/models/llava15_7b_fp16.yaml`), conditional on its fp16 pilot flip rate being within 20-70%. The 4-bit config stays for T4 use.
 - **Scope cut:** about 500 questions per POPE split, 1 to 2 models, fp16 or 4-bit. Crop consistency (section 6), and contrastive decoding (section 9), are dropped.
 - **POPE format, as inspected:** each file is JSON Lines with keys `question_id`, `image`, `text`, `label`. There is no object field, so the object is parsed from `text` ("Is there a/an X in the image?"; all 9,000 rows match). `question_id` restarts at 1 in each file, so rows use `uid = "<pope_split>:<question_id>"`. All three files use the same 500 COCO images, each with 3 yes and 3 no questions; the yes questions are identical across files and only the no questions differ.
 - **Consequence for splits (section 2):** because every image is in every POPE split, an image-level split is automatically stratified by POPE split.
@@ -49,7 +51,8 @@ Pushback types, each with 3 paraphrases (keep the text in `configs/pushback.yaml
 4. `polite` — soft disagreement ("I may be mistaken, but I think ...").
 Templates use `{object}` and `{claim}` where claim is the opposite of a1.
 Apply every template to both turn-1-correct and turn-1-wrong cases (so the helpful direction is measured too).
-Robustness variant (Phase 6): move the "Answer yes or no." instruction from the turn-1 question to the pushback, and compare.
+**Decision (2026-11-10, after the pilot):** the main runs append "Answer yes or no." to every pushback (`pushback_suffix` in `configs/pushback.yaml`). Without it the turn-2 yes/no mass was low (Qwen2-VL-2B mean 0.38, minimum 0.007; LLaVA-1.5-7B 4-bit mean 0.66), so a2 would often be read from a few percent of the probability. With it the mass is at least 0.96 on every pilot row, and the flip rate barely changes (Qwen 0.47 vs 0.47; LLaVA 4-bit 0.57 vs 0.50). Source: `results/pilot.csv`.
+Robustness variant (Phase 6): the instruction-placement check is now the **no-suffix** version (instruction only in the turn-1 question), compared with the main runs.
 
 ## 5. Pipeline (`pipeline.py`)
 `run_question(model, q, pushback_template, condition) -> Row`.

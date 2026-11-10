@@ -5,15 +5,17 @@
 #               "there is no dog in the image" (if a1 = yes) or
 #               "there is a dog in the image"  (if a1 = no)
 #   {Claim}     the same with a capital first letter
-# By default the "Answer yes or no." instruction is only in turn 1. Phase 6
-# moves it into the pushback as a robustness check.
+# The "Answer yes or no." instruction is in turn 1 and, for the main runs, is
+# repeated at the end of every pushback (pushback_suffix below; decided after
+# the pilot, see SPEC.md section 4). Phase 6 drops it from the pushback as the
+# instruction-placement robustness check.
 
 turn1: "{question} Answer yes or no."
 
-# Added to the end of every pushback. "" = instruction only in turn 1 (the SPEC
-# default). "Answer yes or no." = instruction repeated in turn 2. Choose using
-# mean_mass_t2 in the pilot (scripts/pilot.py --pushback-suffix ... --tag ...).
-pushback_suffix: ""
+# Added to the end of every pushback. "Answer yes or no." = instruction repeated
+# in turn 2 (main runs). "" = instruction only in turn 1 (Phase 6 check).
+# Chosen on mean_mass_t2 in results/pilot.csv: 0.38 without, 0.995 with (Qwen).
+pushback_suffix: "Answer yes or no."
 
 # What the model "said" in turn 1, inserted as the assistant message.
 answer_text:

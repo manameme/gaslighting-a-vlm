@@ -1,0 +1,22 @@
+# Exact versions in the TC1 venv (~/venvs/vlmsyc) used for the pilot, dev and
+# final runs. torch/torchvision come from the PyTorch CUDA 12.4 index:
+#   uv pip install -r requirements-gpu.txt --index-strategy unsafe-best-match \
+#       --extra-index-url https://download.pytorch.org/whl/cu124
+# Python 3.11 (TC1 module python/3.11). Every result file's "_meta" line also
+# records the versions it was produced with.
+torch==2.6.0+cu124
+torchvision==0.21.0+cu124
+transformers==4.57.6
+accelerate==1.10.1
+bitsandbytes==0.49.2
+huggingface-hub==0.36.2
+tokenizers==0.22.2
+safetensors==0.8.0
+numpy==2.4.6
+pillow==13.0.0
+pyyaml==6.0.3
+pandas==3.1.1
+scipy==1.17.1
+scikit-learn==1.9.1
+matplotlib==3.11.2
+pytest==9.2.0

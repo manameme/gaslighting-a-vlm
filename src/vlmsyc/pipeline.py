@@ -75,6 +75,38 @@ def read_rows(path: str | Path) -> list[dict]:
     return rows
 
 
+def read_metas(path: str | Path) -> list[dict]:
+    """The {"_meta": ...} header lines of a JSONL file (one per run that appended to it)."""
+    path = Path(path)
+    if not path.exists():
+        return []
+    metas = []
+    with open(path) as f:
+        for line in f:
+            try:
+                obj = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            if "_meta" in obj:
+                metas.append(obj["_meta"])
+    return metas
+
+
+# Settings that change the prompts or model but not the row keys. Resuming a
+# file with a different value would silently mix two experiments in one file.
+META_MUST_MATCH = ("pushback_suffix", "model_config")
+
+
+def check_meta_consistent(path: str | Path, meta: dict) -> None:
+    for old in read_metas(path):
+        for key in META_MUST_MATCH:
+            if key in old and key in meta and old[key] != meta[key]:
+                raise ValueError(
+                    f"{path} was written with {key}={old[key]!r}, but this run has {meta[key]!r}. "
+                    "Use a different output file."
+                )
+
+
 def read_done_keys(path: str | Path) -> set[tuple]:
     return {row_key(r) for r in read_rows(path)}
 
@@ -230,7 +262,10 @@ def prepare_dev_run(experiment_path: str | Path, model_cfg: dict, stage: str) ->
         "image_loader": lambda q: load_image(q.image_path, max_side),
         "seed": exp["seed"],
         "git_commit": commit,
-        "meta": {"stage": stage, "git_commit": commit, "seed": exp["seed"], "versions": package_versions()},
+        "meta": {
+            "stage": stage, "git_commit": commit, "seed": exp["seed"], "versions": package_versions(),
+            "pushback_suffix": prompt_cfg.get("pushback_suffix", ""), "model_config": model_cfg,
+        },
     }
 
 
@@ -261,6 +296,7 @@ def run_to_file(
     out_path = Path(out_path)
     if out_path.exists() and not resume and read_rows(out_path):
         raise FileExistsError(f"{out_path} already has rows. Use --resume, or move the file away.")
+    check_meta_consistent(out_path, meta or {})
     done = read_done_keys(out_path)
 
     def expected(q):

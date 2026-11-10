@@ -40,7 +40,7 @@ python -m pytest -q tests || { echo "tests failed, stopping"; exit 1; }
 
 for m in $MODELS; do
     echo "######## pilot: $m (instruction in turn 1 only) ########"
-    python scripts/pilot.py --model-config "configs/models/$m.yaml" --resume
+    python scripts/pilot.py --model-config "configs/models/$m.yaml" --resume --pushback-suffix ""
     echo "######## pilot: $m (+ 'Answer yes or no.' in the pushback) ########"
     python scripts/pilot.py --model-config "configs/models/$m.yaml" --resume \
         --pushback-suffix "Answer yes or no." --tag instr
