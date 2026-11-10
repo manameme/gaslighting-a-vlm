@@ -110,3 +110,54 @@ Raw signals as defined in `src/vlmsyc/signals.py`. Every gate turns its signal i
 
 ## 10. Multiple comparisons
 No correction is applied. The primary tests are H2 (2 models × 1 comparison) and H3 (2 models). Everything else is descriptive and labelled so.
+
+---
+
+# Amendment A (2026-11-11): headline choices and the confirmatory test analysis
+
+Written **after** the dev results in sections 1–10 were seen, and **before** the test split is touched or the `pre-final` tag exists. Decided by the team; recorded here and committed before any code changes for the final run.
+
+## A1. Change to the learned gates (decided after seeing dev results)
+- **Learned gate A** now uses [conf1, shift_to_claim, **pushback type**]. Pushback type is one-hot coded with neutral_doubt as the reference level, giving three indicators: assertive, authority, polite.
+- **Learned gate B** = A + [reliance_blur, reliance_blank].
+- Both are refit on dev with the same cross-validation as before (section 3). The earlier dev H2 result, without pushback type, stays in the history (`results/h2_dev.csv` at commit a4fbc82) and will be reported as the first dev analysis. The dev H2 with the amended gates is reported next to it. The **confirmatory** H2 test is on the test split (A4).
+
+## A2. Headline gates and references
+- **Headline gates:**
+  - the confidence threshold gate (`conf_gate`);
+  - learned gate A;
+  - learned gate B.
+
+  The other single-signal gates (blur, blank, shift) are reported as secondary, in the appendix.
+- **References on every plot and table:**
+  - always-accept;
+  - never-accept;
+  - a **matched random gate**, which accepts each flip with probability equal to the evaluated gate's acceptance rate among flips (100 seeds; expected value and 95% band);
+  - the oracle, with its ECR ceiling (= the flip rate when a1 is wrong).
+
+## A3. Operating points and π
+- **Thresholds:** the frozen dev thresholds in `results/frozen_gates.json` are applied unchanged. There is no refitting and no threshold tuning on test.
+- **Primary operating point:** the threshold tuned at dev's empirical π. It is reported at the **native π** of the evaluated split (its observed a1-wrong rate).
+- **Sensitivity:** for π ∈ {0.1, 0.3, 0.5}, use the threshold frozen for that π, with net change computed at that π.
+- **π = 0.5 is not a headline.** It is reported only in the sensitivity table and figure.
+- **Comparisons, with 95% paired image-clustered bootstrap intervals (1,000 resamples, seed 0):**
+  - each headline gate's net accuracy change minus **never-accept**'s (never-accept's net change is 0 by definition, so this is the gate's net change with its CI);
+  - each headline gate minus the **matched random gate** (expected value at the same acceptance rate within each resample).
+
+## A4. H2 confirmatory test (test split)
+- **Comparison:** frozen learned gate B vs frozen learned gate A, per model, on the test split; no refitting.
+- **Statistic:** Δ = AUROC(B) − AUROC(A) for good vs bad revisions among flips (primary), and Δ in raw area under the EIR–ECR curve (reported; equivalent up to scale, see section 4).
+- **Interval:** paired image-clustered bootstrap, 1,000 resamples, seed 0, 95% percentile CI.
+- **Decision per model:**
+  - CI entirely above 0: reliance adds information.
+  - CI includes 0: **no clear effect**.
+  - CI entirely below 0: adding reliance hurts.
+- **Overall:** "supported" only if the CI is above 0 for **both** models; "mixed" if for one; otherwise "not supported" (a negative result).
+
+## A5. Other final-run analyses (secondary)
+- **H3 on test:** the same rule as section 8, using frozen gates.
+- **Prompt mitigations on test:** grounding and re-look are scored with every revision accepted, with paired differences to base, as in Phase 6. No-suffix stays **dev only**.
+- **Results by turn-1 answer:** descriptive, as in section 7.
+
+## A6. Dry run
+`scripts/analyse_final.py --partition dev` runs the identical analysis code on dev. Because the frozen gates were fit on dev, these numbers are **in-sample**, not results. The dry run exists only to show that the tables and figures are produced. Its outputs go to `results/final_dryrun_dev/` and `figures/final_dryrun_dev/` and are labelled as a dry run.
