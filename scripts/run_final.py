@@ -32,7 +32,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from vlmsyc.paths import REPO_ROOT, git_commit, load_yaml, results_dir  # noqa: E402
+from vlmsyc.paths import REPO_ROOT, data_dir, git_commit, load_yaml, results_dir  # noqa: E402
 from vlmsyc.pipeline import (  # noqa: E402
     append_jsonl, pending_questions, prepare_run, read_rows, run_degraded_passes, run_to_file,
 )
@@ -145,6 +145,10 @@ def main() -> None:
         commit = check_release()                       # tag pre-final on HEAD + clean tree
         if not FROZEN.exists():
             sys.exit("results/frozen_gates.json is missing.")
+        # The split used must be the committed one, even if DATA_DIR points elsewhere.
+        used, committed = data_dir() / "splits.json", REPO_ROOT / "data" / "splits.json"
+        if sha256_file(used) != sha256_file(committed):
+            sys.exit(f"{used} differs from the committed data/splits.json; refusing.")
         partition, out_dir = "test", results_dir()
         header = {"git_commit": commit, "release_tag": "pre-final", "frozen_gates_sha256": sha256_file(FROZEN)}
         # Every guard passed: unlock the test partition for this process only.
