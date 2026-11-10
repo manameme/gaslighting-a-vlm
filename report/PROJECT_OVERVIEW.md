@@ -1,6 +1,6 @@
 # When should a VLM accept a user's correction?
 
-**Project overview, as of 10 Nov 2026, 23:15 SGT.** NTU SC4001 group project, Direction E: hallucination and reliability in VLMs. Deadline: **16 Nov 2026, 11:59 PM**.
+**Project overview, as of 10 Nov 2026, late evening SGT (after Phase 5 on dev).** NTU SC4001 group project, Direction E: hallucination and reliability in VLMs. Deadline: **16 Nov 2026, 11:59 PM**.
 
 Every number in this document comes from a file in `results/`, and the file is named next to it. Anything not yet run is marked *pending*.
 
@@ -64,15 +64,22 @@ Gate     accept -> final = a2      block -> final = a1
 
 Blur: Gaussian, with σ = 3% of the longer image side, fixed before any signal was computed and not tuned. Examples are in `figures/degradation_examples_dev.png`. Crop consistency was cut for time.
 
-### 4.3 Gates and how they are scored (next phase)
-- **Gates:** always-accept (no gate), never-accept, a threshold on each signal, and a learned logistic-regression gate (fit on dev only).
-- **Reference points:** a **random gate** with the same acceptance rate (lower reference) and an **oracle gate** that accepts only correct revisions (upper bound).
-- **Metrics** (definitions from the Moral Sycophancy in VLMs paper, arXiv 2602.08311):
+### 4.3 Gates and how they are scored (Phase 5, dev only)
+The full plan, including decision rules and sign conventions, is in `results/analysis_plan.md`. It was committed before any gate was fitted.
+
+- **Single-signal gates:** accept a flip iff the signal is **low**: conf1, blur reliance, blank reliance, or shift towards the claim.
+  - For shift, this is the opposite of the original SPEC rule. We flipped it because the dev signal table, seen before the plan was written, showed that large shifts go with bad revisions. This is disclosed in the plan.
+- **Learned gates (for H2):** logistic regression on flips, with target "revision is good".
+  - **A** = [conf1, shift]
+  - **B** = A + [blur reliance, blank reliance]
+- **Out-of-fold evaluation:** 5-fold cross-validation **grouped by image** within dev. Thresholds and learned gates are fit on 4 folds and scored on the 5th; all headline numbers are out-of-fold (OOF). In-sample curves are labelled exploratory.
+- **Reference points:** a **random gate**, plotted as a band over 100 seeds, and an **oracle gate**. The oracle's ECR is capped at the flip rate when turn 1 was wrong: a gate can only choose between a1 and a2, so it cannot fix errors the model did not flip on.
+- **Metrics:**
   - **EIR (Error Introduction Rate)** = P(final answer wrong | turn-1 answer was right). Lower is better.
   - **ECR (Error Correction Rate)** = P(final answer right | turn-1 answer was wrong). Higher is better.
-
-  Sweeping a gate's threshold traces an EIR–ECR trade-off curve.
-- **Uncertainty:** 95% confidence intervals from a bootstrap that resamples **whole images** (1,000 resamples), because rows from the same image are not independent.
+  - **Net accuracy change** = π·ECR − (1−π)·EIR, where π = P(user is right).
+  - **AUROC** for good vs bad revisions, and the area under the EIR–ECR curve. Normalised, that area equals the same AUROC, so the two are not independent evidence.
+- **Uncertainty:** 95% CIs from a bootstrap clustered by image (1,000 resamples). It is paired when a difference is reported.
 
 ### 4.4 Compute and reproducibility
 - **Hardware:** NTU CCDS TC1 cluster, Tesla V100 32 GB, with SLURM jobs in `slurm/`. Kaggle T4 notebooks remain a fallback.
@@ -131,36 +138,94 @@ Sources: `results/baseline_dev_qwen2vl_2b.jsonl` and `results/baseline_dev_llava
 - **Pushback that names a claim beats "Are you sure?" for both models, and an assertive tone is strongest.** Qwen is much more sensitive to the wording (0.15 to 0.82) than LLaVA (0.39 to 0.57).
 - **LLaVA's turn-1 accuracy is lowest on the adversarial split** (0.83 vs 0.885), as POPE intends. Qwen's is about flat.
 
-### 5.3 Signals on dev (`results/signals_auroc_dev.csv`)
-AUROC with 95% CIs from a bootstrap clustered by image. 0.5 means no information; values below 0.5 mean the signal works in the opposite direction.
+### 5.3 Signals on dev (`results/signals_auroc_dev.csv`, `results/signals_by_a1_dev.csv`)
+AUROC of the **raw** signal with 95% CIs clustered by image. 0.5 means no information; below 0.5 means a high signal goes with the negative class.
 
-**Predicts a flip** (all 7,200 rows per model):
+| Signal | Predicts a flip: Qwen | LLaVA | Predicts a good revision (among flips): Qwen | LLaVA |
+|---|---|---|---|---|
+| conf1 | 0.317 [0.288, 0.348] | 0.452 [0.426, 0.480] | 0.179 [0.137, 0.226] | 0.178 [0.138, 0.219] |
+| reliance_blur | 0.711 [0.690, 0.731] | 0.708 [0.693, 0.722] | 0.202 [0.146, 0.260] | 0.300 [0.231, 0.366] |
+| reliance_blank | 0.558 [0.530, 0.586] | 0.721 [0.706, 0.733] | 0.140 [0.101, 0.182] | 0.201 [0.151, 0.249] |
+| shift_to_claim | not reported (circular: comes from the same turn-2 output as the flip) | — | 0.175 [0.139, 0.213] | 0.170 [0.131, 0.210] |
 
-| Signal | Qwen2-VL-2B | LLaVA-1.5-7B fp16 |
+**Correction (from the split by turn-1 answer).** An earlier version of this overview said "image-driven answers are easier to push over". **That was a confound and is withdrawn.** Within each turn-1 answer, blur reliance does *not* predict flips; its AUROC is slightly *below* 0.5:
+
+| Blur reliance → flip | Qwen | LLaVA |
 |---|---|---|
-| conf1 | 0.317 [0.288, 0.348] | 0.452 [0.426, 0.480] |
-| reliance_blur | 0.711 [0.690, 0.731] | 0.708 [0.693, 0.722] |
-| reliance_blank | 0.558 [0.530, 0.586] | 0.721 [0.706, 0.733] |
-| shift_to_claim | 0.774 [0.752, 0.798] | 0.920 [0.909, 0.931] |
+| a1 = yes | 0.484 [0.475, 0.492] | 0.490 [0.485, 0.493] |
+| a1 = no | 0.432 [0.401, 0.466] | 0.403 [0.380, 0.426] |
 
-**Predicts a *good* revision** (only among flips: Qwen 3,790 rows, LLaVA 3,375 rows):
+The pooled 0.71 comes from mixing two groups (Simpson's paradox):
+- **"Yes" answers flip far more** than "no" answers. Qwen: 2,443 of 2,892 "yes" rows flip vs 1,347 of 4,308 "no" rows. LLaVA: 2,403 of 3,168 vs 972 of 4,032.
+- **"Yes" answers have much higher blur reliance** (mean 0.55 vs 0.07 for Qwen; 0.60 vs −0.005 for LLaVA).
 
-| Signal | Qwen2-VL-2B | LLaVA-1.5-7B fp16 |
+Confidence still predicts *not* flipping within each answer, more strongly for "no" (Qwen 0.295, LLaVA 0.358) than for "yes" (0.470, 0.481). For good revisions, every signal stays well below 0.5 within each answer, so it isn't a pooling artefact (`signals_by_a1_dev.csv`).
+
+### 5.4 Gates on dev, out-of-fold (`results/gates_dev.csv`, `figures/eir_ecr_dev.png`)
+| Gate (acceptance score) | OOF AUROC, good revision: Qwen | LLaVA |
 |---|---|---|
-| conf1 | 0.179 [0.137, 0.226] | 0.178 [0.138, 0.219] |
-| reliance_blur | 0.202 [0.146, 0.260] | 0.300 [0.231, 0.366] |
-| reliance_blank | 0.140 [0.101, 0.182] | 0.201 [0.151, 0.249] |
-| shift_to_claim | 0.175 [0.139, 0.213] | 0.170 [0.131, 0.210] |
+| conf_gate | 0.821 [0.770, 0.864] | 0.822 [0.781, 0.862] |
+| reliance_blur_gate | 0.798 [0.747, 0.855] | 0.700 [0.634, 0.769] |
+| reliance_blank_gate | 0.860 [0.817, 0.899] | 0.799 [0.751, 0.849] |
+| shift_gate | 0.825 [0.784, 0.862] | 0.830 [0.790, 0.869] |
+| learned A: conf1 + shift | 0.832 [0.788, 0.870] | 0.821 [0.778, 0.860] |
+| learned B: A + reliance | 0.866 [0.825, 0.902] | 0.821 [0.776, 0.861] |
 
-How to read it:
-- **H1 (confidence predicts flips): supported for Qwen, weak for LLaVA.** Confident answers flip less: AUROC 0.32 for Qwen (0.68 the other way round), but only 0.45 for LLaVA (0.55 the other way round, with a CI that excludes 0.5).
-- **Every signal is strongly informative about whether a revision is good, for both models, all in the same direction.** If the model was confident, image-driven or strongly moved, the revision is usually *wrong*. The flipped AUROCs are about 0.70–0.86. This makes sense: those turn-1 answers were mostly right, so changing them introduces errors.
-- **Image reliance is positively related to flipping for both models** (about 0.71). Answers that depend on the image are easier to push over, even though they are more likely to be right. This is worth a closer look in the report.
-- **`shift_to_claim` predicts flips well, especially for LLaVA (0.92).** This is partly by construction, since a flip is a large shift. It is only usable as a gate input because it is measured before the final answer is accepted.
-- **Not yet tested:** whether reliance adds information *beyond* confidence (H2) needs the gate comparison. Results per POPE split (H3) are in the CSV but not yet analysed.
+- **Every gate is far above the random-gate band** in the EIR–ECR plot, for both models.
+- **At the empirical π (≈ 0.13, the dev turn-1 error rate) the best thing to do is almost never accept a revision.** With thresholds tuned out-of-fold, every gate accepts only a small share of flips and lands at a net accuracy change near 0 (between −0.005 and +0.010). Most CIs include 0; for LLaVA, shift_gate [−0.004, −0.001] and learned A [−0.005, −0.001] are slightly but reliably negative.
+  - Always-accept: −0.383 (Qwen) and −0.349 (LLaVA).
+  - Oracle: +0.072 and +0.060.
 
-### 5.4 Pending
-- Gate comparison (EIR–ECR curves, learned gate, random and oracle bounds) and the per-split H3 analysis.
+### 5.5 H2: does reliance add information beyond conf1 + shift? (`results/h2_dev.csv`)
+Paired, image-clustered bootstrap of B − A in OOF AUROC. The decision rule is in `analysis_plan.md` §5.
+
+| Model | A | B | B − A [95% CI] | Decision |
+|---|---|---|---|---|
+| Qwen2-VL-2B | 0.832 | 0.866 | **+0.034 [+0.010, +0.061]** | reliance adds information |
+| LLaVA-1.5-7B | 0.821 | 0.821 | +0.000 [−0.010, +0.011] | no clear effect |
+
+**H2 overall: mixed.** Reliance helps for Qwen and makes no difference for LLaVA. The raw area under the EIR–ECR curve gives the same verdicts: Qwen +0.010 [+0.003, +0.017], LLaVA +0.000 [−0.002, +0.002]. Caveat: the bootstrap holds the OOF predictions fixed and does not refit, so it understates the uncertainty that comes from fitting.
+
+### 5.6 Sensitivity to how often the user is right (`results/sensitivity_pi_dev.csv`, `figures/sensitivity_pi_dev.png`)
+Net accuracy change vs turn 1, OOF, with thresholds re-tuned for each π:
+
+| π = P(user right) | Always accept (Qwen / LLaVA) | Best gate on dev (Qwen / LLaVA) | Oracle (Qwen / LLaVA) |
+|---|---|---|---|
+| 0.1 | −0.420 / −0.379 | +0.004 (blur) / −0.001 (several) | +0.053 / +0.045 |
+| 0.3 | −0.208 / −0.195 | +0.048 (conf) / +0.020 (blank) | +0.160 / +0.135 |
+| 0.5 | +0.004 / −0.011 | +0.150 (learned B) / +0.118 (learned B) | +0.266 / +0.225 |
+
+- **Gating only pays off when the user is right fairly often** (π ≥ 0.3).
+- **At π = 0.5 the gates recover about half of the oracle's gain.**
+- **At π = 0.1 the gates can do no better than refusing revisions.** None gets a reliably positive net change.
+
+### 5.7 H3 per POPE split (`results/h3_calibration_dev.csv`, `results/h3_gates_by_split_dev.csv`, `results/h3_dev.csv`)
+| | Qwen random / popular / adversarial | LLaVA random / popular / adversarial |
+|---|---|---|
+| Turn-1 accuracy | 0.870 / 0.860 / 0.865 | 0.885 / 0.885 / 0.830 |
+| Mean conf1 on wrong answers | 0.752 / 0.742 / 0.825 | 0.748 / 0.789 / 0.739 |
+| Share of wrong answers with conf1 > 0.9 | 0.19 / 0.21 / 0.44 | 0.13 / 0.30 / 0.12 |
+| conf_gate OOF AUROC | 0.859 / 0.852 / 0.742 | 0.876 / 0.788 / 0.797 |
+| reliance_blur_gate OOF AUROC | 0.818 / 0.844 / 0.723 | 0.794 / 0.746 / 0.606 |
+
+Decision rule (`analysis_plan.md` §8):
+- **Condition 1:** the confidence gate degrades on adversarial vs random. The difference is −0.117 [−0.263, +0.005] for Qwen and −0.079 [−0.169, +0.007] for LLaVA. Both CIs include 0, so condition 1 is not met.
+- **Condition 2:** blur reliance holds up better than confidence (difference-in-differences). Qwen +0.021 [−0.154, +0.214]; LLaVA −0.108 [−0.285, +0.054]. Not met.
+
+**H3 is not supported for either model. This is a negative result.**
+- **Qwen:** its wrong answers on the adversarial split *are* more often confidently wrong (44% above conf1 = 0.9 vs 19% on random), and its confidence gate is lower there. But the drop isn't statistically clear, and the blur-reliance gate drops just as much.
+- **LLaVA:** the adversarial split lowers its accuracy, not its confidence when wrong. Its blur-reliance gate is *worst* on adversarial (0.606).
+- **Power is low:** each split has only 23–34 wrong questions per model.
+
+### 5.8 Frozen for the test run (`results/frozen_gates.json`)
+- **Contents:** thresholds for every gate (at the empirical π and at π = 0.1, 0.3, 0.5), plus learned-gate coefficients and standardisation, refit on all of dev.
+- **Provenance:** git commit `b2e089e`.
+- **Use:** `run_final.py --final` will apply these unchanged to the test split, once. The test split has not been touched.
+
+### 5.9 Pending
+- **Phase 6 (dev, TC1 job 73360, running):** grounding system prompt, re-look prompt (image shown again in turn 2), and the no-suffix instruction-placement check, for both models. They will be scored with the same EIR/ECR/net-change metrics.
+- **Phase 7:** freeze (git tag `pre-final`) and the single test run.
+- **Phases 8–9:** failure-case gallery, final figures, README reproduction steps, the report.
 
 ---
 
@@ -180,10 +245,9 @@ These are the papers listed in the project brief. What we say about each must be
 - Crop-consistency signal and contrastive-decoding baselines dropped.
 
 ## 8. What happens next
-1. **Phase 5 (dev):** gates and EIR–ECR curves with random and oracle bounds, the learned gate, and thresholds chosen on dev. Analysis per POPE split for H3.
-2. **Phase 6 (dev):** grounding prompt, re-look prompt, and the instruction-placement check (no-suffix version).
-3. **Phase 7:** freeze everything (git tag `pre-final`), then run the test split **once** with `run_final.py --final`.
-4. **Phases 8–9:** figures, failure-case gallery, README reproduction steps, report (10 pages, A4, Arial 10pt) including the AI Use Statement (`AI_USE_LOG.md`).
+1. **Phase 6 (dev, running):** grounding prompt, re-look prompt and the no-suffix check, scored on the same EIR/ECR axes as the gates.
+2. **Phase 7:** freeze everything (git tag `pre-final`), then run the test split **once** with `run_final.py --final`, applying `results/frozen_gates.json` unchanged.
+3. **Phases 8–9:** figures, failure-case gallery, README reproduction steps, report (10 pages, A4, Arial 10pt) including the AI Use Statement (`AI_USE_LOG.md`).
 
 ## 9. Ground rules we follow
 - No fabricated numbers or citations. Every reported number comes from a file in `results/` produced by a script in this repo.

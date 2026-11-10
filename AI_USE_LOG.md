@@ -46,3 +46,21 @@ Record of what Claude Code was used for in each session and what the team verifi
 - [ ] Read `signals.py` and the signal definitions; check the AUROC hand-computed tests in `tests/test_signals.py`
 - [ ] Look at a few blurred and blank images to confirm the degradation is sensible
 - [ ] Confirm `results/signals_auroc_dev.csv` was produced by `scripts/run_signals.py` on dev only
+
+## 2026-11-10 (night): Phase 5 on dev (CPU), Phase 6 queued (TC1)
+
+**Claude Code was used for:**
+- Writing `results/analysis_plan.md` to the user's rules (H2 and H3 decision rules, sign conventions, grouped CV, π sensitivity). It was committed (c18dfe8) before any gate was fitted. The plan discloses that the dev signal AUROCs had already been seen and that this informed the orientation of the shift gate, which departs from SPEC.
+- Writing `src/vlmsyc/gates.py` (EIR/ECR, threshold sweep, oracle and random gates, image-grouped folds, learned logistic gate), `scripts/fit_gates_dev.py`, `scripts/make_figures.py` and 6 hand-computed tests in `tests/test_gates.py` (60 tests in total). It also removed the circular flip AUROC of `shift_to_claim` from `run_signals.py`.
+- Running the analysis on the laptop CPU, on dev only. A quick 30-resample run in a scratch folder was done first to check that the code worked. Nothing in the analysis was changed after it, and the official 1,000-resample run (code at 057c2ef, re-run at b2e089e to record a clean commit) gave identical CSVs.
+- Finding and reporting that an earlier claim ("image-driven answers are easier to push over") was a confound with the turn-1 answer (Simpson's paradox). The claim is withdrawn in the overview.
+- Phase 6 code: the grounding / re-look / no-suffix conditions in `configs/pushback.yaml` and `prompts.py`, several images per conversation in `models.py`, a check that the chat template keeps the condition's text, and `slurm/job_phase6.sh` (TC1 job 73360).
+- Updating `report/PROJECT_OVERVIEW.md` with the Phase 5 results, the correction, and the pending items.
+
+**Team verification:**
+- [ ] Read `results/analysis_plan.md` and agree with the decision rules before the test run
+- [ ] Re-derive one EIR/ECR value by hand from `results/signals_dev_qwen2vl_2b.jsonl`
+- [ ] Check the oracle and random-gate logic in `gates.py` and `tests/test_gates.py`
+- [ ] Look at `figures/eir_ecr_dev.png`, `figures/sensitivity_pi_dev.png` and `figures/reliability_by_split_dev.png`
+- [ ] Confirm H2 = mixed and H3 = not supported are reported as such (including the negative result)
+- [ ] Check the printed rendered prompts in the Phase 6 job log (system text and second image present)
