@@ -242,6 +242,12 @@ def prepare_dev_run(experiment_path: str | Path, model_cfg: dict, stage: str, co
     stage is 'pilot' or 'baseline' (a section of configs/experiment.yaml).
     Always uses the dev partition: the test split is only for run_final.py.
     """
+    return prepare_run(experiment_path, model_cfg, stage, condition, partition="dev")
+
+
+def prepare_run(experiment_path: str | Path, model_cfg: dict, stage: str, condition: str, partition: str) -> dict:
+    """As prepare_dev_run, for a given partition. Loading the test partition
+    is still refused by splits.load_questions unless scripts/run_final.py --final unlocked it."""
     from .paths import data_dir, git_commit, load_yaml, package_versions
     from .prompts import pushbacks_from_config
     from .splits import load_questions
@@ -250,7 +256,7 @@ def prepare_dev_run(experiment_path: str | Path, model_cfg: dict, stage: str, co
     data_cfg = load_yaml(exp["data"])
     prompt_cfg = apply_condition(load_yaml(exp["prompts"]), condition)
     questions = load_questions(
-        "dev",
+        partition,
         data_dir() / data_cfg["splits_file"],
         data_dir() / data_cfg["pope_dir"],
         data_dir() / data_cfg["image_dir"],
@@ -266,7 +272,8 @@ def prepare_dev_run(experiment_path: str | Path, model_cfg: dict, stage: str, co
         "seed": exp["seed"],
         "git_commit": commit,
         "meta": {
-            "stage": stage, "git_commit": commit, "seed": exp["seed"], "versions": package_versions(),
+            "stage": stage, "partition": partition, "git_commit": commit, "seed": exp["seed"],
+            "versions": package_versions(),
             "pushback_suffix": prompt_cfg.get("pushback_suffix", ""), "model_config": model_cfg,
             "condition": condition, "system": prompt_cfg.get("system"), "relook": prompt_cfg.get("relook"),
         },
@@ -345,3 +352,51 @@ def run_to_file(
     stats["remaining"] = total_todo - stats["questions_run"]
     stats["sec_per_question"] = stats["seconds"] / stats["questions_run"] if stats["questions_run"] else None
     return stats
+
+
+# ---------- degraded-image turn-1 passes (signals) ----------
+
+
+def run_degraded_passes(model: VLM, questions: list[Question], prompt_cfg: dict, sig_cfg: dict, out_path,
+                        *, partition: str, batch_size: int, image_loader, seed: int, git_commit: str,
+                        meta: dict) -> int:
+    """Turn-1 p(yes) with the image blurred and blanked, appended after each batch.
+
+    Resumes: (question, degradation) pairs already in out_path are skipped.
+    The caller decides whether resuming this file is allowed. Returns pairs run.
+    """
+    from .signals import DEGRADATIONS, degrade
+
+    out_path = Path(out_path)
+    done = {(r["uid"], r["degradation"]) for r in read_rows(out_path)}
+    todo = [(q, d) for q in questions for d in DEGRADATIONS if (q.uid, d) not in done]
+    print(f"degraded turn-1 passes: {len(todo)} to do, {len(done)} already done -> {out_path}", flush=True)
+    if not todo:
+        return 0
+    append_jsonl(out_path, [{"_meta": {**meta, "started": time.strftime("%Y-%m-%d %H:%M:%S")}}])
+    runner = BatchRunner(model, batch_size)
+    start = time.time()
+    for b in range(0, len(todo), batch_size):
+        batch = todo[b : b + batch_size]
+        images = [degrade(image_loader(q), d, sig_cfg) for q, d in batch]
+        results = runner([turn1_messages(q, prompt_cfg) for q, _ in batch], images)
+        append_jsonl(out_path, [
+            {
+                "uid": q.uid, "image_id": q.image_id, "pope_split": q.pope_split, "partition": partition,
+                "model": model.name, "degradation": d, "p1_yes": r.p_yes, "yesno_mass": r.mass,
+                "logp_yes": r.logp_yes, "logp_no": r.logp_no, "seed": seed, "git_commit": git_commit,
+            }
+            for (q, d), r in zip(batch, results)
+        ])
+        if (b // batch_size) % 20 == 0:
+            n = b + len(batch)
+            print(f"  {n}/{len(todo)}  {(time.time() - start) / n:.3f} s/pass", flush=True)
+    return len(todo)
+
+
+def pending_questions(out_path, questions: list[Question], pushbacks: list[Pushback], model_name: str,
+                      condition: str) -> list[Question]:
+    """Questions that do not yet have all their rows in out_path (so no model is needed if empty)."""
+    done = read_done_keys(out_path)
+    return [q for q in questions
+            if not {(q.uid, model_name, pb.type, pb.paraphrase_id, condition) for pb in pushbacks} <= done]

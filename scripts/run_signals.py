@@ -25,7 +25,6 @@ from __future__ import annotations
 import argparse
 import csv
 import sys
-import time
 from pathlib import Path
 
 import numpy as np
@@ -34,9 +33,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from vlmsyc.paths import git_commit as get_git_commit  # noqa: E402
 from vlmsyc.paths import load_yaml, package_versions, results_dir  # noqa: E402
-from vlmsyc.pipeline import BatchRunner, append_jsonl, check_meta_consistent, read_rows  # noqa: E402
-from vlmsyc.prompts import turn1_messages  # noqa: E402
-from vlmsyc.signals import DEGRADATIONS, degrade, signal_rows  # noqa: E402
+from vlmsyc.pipeline import append_jsonl, check_meta_consistent, read_rows, run_degraded_passes  # noqa: E402
+from vlmsyc.signals import signal_rows  # noqa: E402
 from vlmsyc.stats import auroc, cluster_bootstrap_ci  # noqa: E402
 
 # (column, score transform). A higher score should mean "more likely positive";
@@ -56,35 +54,14 @@ CIRCULAR_FOR_FLIP = ("shift_to_claim", "abs_shift")
 
 
 def run_degraded(model, setup, model_cfg, sig_cfg, out_path, resume, batch_size):
-    """Step 1: turn-1 p(yes) on degraded images, resumable."""
+    """Step 1: turn-1 p(yes) on degraded images, resumable (dev)."""
     if out_path.exists() and not resume and read_rows(out_path):
         raise FileExistsError(f"{out_path} already has rows. Use --resume.")
     meta = {**setup["meta"], "stage": "signals", "signals_cfg": sig_cfg, "model": model.describe()}
     check_meta_consistent(out_path, meta)
-    done = {(r["uid"], r["degradation"]) for r in read_rows(out_path)}
-    todo = [(q, d) for q in setup["questions"] for d in DEGRADATIONS if (q.uid, d) not in done]
-    print(f"degraded turn-1 passes: {len(todo)} to do, {len(done)} already done -> {out_path}", flush=True)
-    if not todo:
-        return
-    append_jsonl(out_path, [{"_meta": {**meta, "started": time.strftime("%Y-%m-%d %H:%M:%S")}}])
-    runner = BatchRunner(model, batch_size)
-    start = time.time()
-    for b in range(0, len(todo), batch_size):
-        batch = todo[b : b + batch_size]
-        images = [degrade(setup["image_loader"](q), d, sig_cfg) for q, d in batch]
-        results = runner([turn1_messages(q, setup["prompt_cfg"]) for q, _ in batch], images)
-        append_jsonl(out_path, [
-            {
-                "uid": q.uid, "image_id": q.image_id, "pope_split": q.pope_split, "partition": "dev",
-                "model": model.name, "degradation": d, "p1_yes": r.p_yes, "yesno_mass": r.mass,
-                "logp_yes": r.logp_yes, "logp_no": r.logp_no,
-                "seed": setup["seed"], "git_commit": setup["git_commit"],
-            }
-            for (q, d), r in zip(batch, results)
-        ])
-        if (b // batch_size) % 20 == 0:
-            n = b + len(batch)
-            print(f"  {n}/{len(todo)}  {(time.time() - start) / n:.3f} s/pass", flush=True)
+    run_degraded_passes(model, setup["questions"], setup["prompt_cfg"], sig_cfg, out_path, partition="dev",
+                        batch_size=batch_size, image_loader=setup["image_loader"], seed=setup["seed"],
+                        git_commit=setup["git_commit"], meta=meta)
 
 
 def auroc_table(model_name: str, rows: list[dict], n_boot: int, seed: int) -> list[dict]:
