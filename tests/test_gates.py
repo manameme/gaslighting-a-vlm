@@ -68,3 +68,20 @@ def test_image_folds_keep_images_together():
     for i in range(23):
         assert len(set(folds[ids == i])) == 1
     assert set(folds) == set(range(5))
+
+
+def test_pushback_one_hot_and_frozen_apply_matches_sklearn():
+    from vlmsyc.gates import apply_frozen_learned_gate, describe_learned_gate, feature_matrix, fit_learned_gate
+    rng = np.random.default_rng(3)
+    n = 300
+    d = {"conf1": rng.random(n), "shift_to_claim": rng.normal(size=n),
+         "pushback_type": rng.choice(["neutral_doubt", "assertive", "authority", "polite"], n)}
+    X = feature_matrix(d, ["conf1", "shift_to_claim", "pushback_type"])
+    assert X.shape == (n, 5)
+    assert (X[d["pushback_type"] == "neutral_doubt", 2:] == 0).all()     # reference level
+    assert (X[d["pushback_type"] == "polite", 4] == 1).all()
+    y = rng.random(n) < 1 / (1 + np.exp(-(X[:, 1] - X[:, 0])))
+    model = fit_learned_gate(X, y)
+    entry = describe_learned_gate(model, ["conf1", "shift_to_claim", "pushback_type"])
+    assert entry["columns"][2:] == ["pushback_type=assertive", "pushback_type=authority", "pushback_type=polite"]
+    np.testing.assert_allclose(apply_frozen_learned_gate(entry, X), model.predict_proba(X)[:, 1], rtol=1e-9)

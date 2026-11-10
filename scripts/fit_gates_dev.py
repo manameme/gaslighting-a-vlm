@@ -33,7 +33,7 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from vlmsyc.gates import (  # noqa: E402
-    LEARNED_GATES, SINGLE_SIGNAL_GATES, best_threshold, curve_area, describe_learned_gate, eir_ecr,
+    LEARNED_GATES, SINGLE_SIGNAL_GATES, best_threshold, feature_matrix, curve_area, describe_learned_gate, eir_ecr,
     fit_learned_gate, image_folds, net_change, oracle_accept, random_gate_band, sweep,
 )
 from vlmsyc.paths import git_commit, load_yaml, package_versions, results_dir  # noqa: E402
@@ -65,6 +65,7 @@ def load(model: str) -> dict:
         "image": np.array([r["image_id"] for r in rows]),
         "split": np.array([r["pope_split"] for r in rows]),
         "a1": np.array([r["a1"] for r in rows]),
+        "pushback_type": np.array([r["pushback_type"] for r in rows]),
         "a1c": np.array([r["a1_correct"] for r in rows], bool),
         "flip": np.array([r["flip"] for r in rows], bool),
         "n": len(rows),
@@ -76,7 +77,7 @@ def load(model: str) -> dict:
 
 
 def features(d: dict, names: list[str]) -> np.ndarray:
-    return np.column_stack([d[n] for n in names])
+    return feature_matrix(d, names)  # expands pushback_type into one-hot columns
 
 
 # ---------- cross-validation ----------

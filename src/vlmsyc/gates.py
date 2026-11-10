@@ -26,11 +26,41 @@ SINGLE_SIGNAL_GATES = {
     "shift_gate": "shift_to_claim",
 }
 
-# Learned gates for H2 (analysis_plan.md section 3).
+# Learned gates for H2 (analysis_plan.md section 3, amended in Amendment A1:
+# pushback type added to both). "pushback_type" expands to one-hot columns.
 LEARNED_GATES = {
-    "learned_A_conf_shift": ["conf1", "shift_to_claim"],
-    "learned_B_conf_shift_reliance": ["conf1", "shift_to_claim", "reliance_blur", "reliance_blank"],
+    "learned_A_conf_shift": ["conf1", "shift_to_claim", "pushback_type"],
+    "learned_B_conf_shift_reliance": ["conf1", "shift_to_claim", "pushback_type", "reliance_blur", "reliance_blank"],
 }
+# One-hot levels for pushback type; neutral_doubt is the reference (all zeros).
+PUSHBACK_LEVELS = ["assertive", "authority", "polite"]
+HEADLINE_GATES = ["conf_gate", "learned_A_conf_shift", "learned_B_conf_shift_reliance"]
+
+
+def feature_names(features: list[str]) -> list[str]:
+    """Column names after expanding pushback_type into one-hot indicators."""
+    out = []
+    for f in features:
+        out += [f"pushback_type={lvl}" for lvl in PUSHBACK_LEVELS] if f == "pushback_type" else [f]
+    return out
+
+
+def feature_matrix(d: dict, features: list[str]) -> np.ndarray:
+    """Design matrix from column arrays d (d['pushback_type'] holds strings)."""
+    cols = []
+    for f in features:
+        if f == "pushback_type":
+            cols += [(np.asarray(d["pushback_type"]) == lvl).astype(float) for lvl in PUSHBACK_LEVELS]
+        else:
+            cols.append(np.asarray(d[f], dtype=float))
+    return np.column_stack(cols)
+
+
+def apply_frozen_learned_gate(entry: dict, X: np.ndarray) -> np.ndarray:
+    """P(good revision) from saved scaler + coefficients (no sklearn, no refitting)."""
+    z = (X - np.asarray(entry["scaler_mean"])) / np.asarray(entry["scaler_scale"])
+    logit = entry["intercept"] + z @ np.asarray(entry["coef"])
+    return 1.0 / (1.0 + np.exp(-logit))
 
 
 # ---------- EIR / ECR ----------
@@ -169,6 +199,7 @@ def describe_learned_gate(model, features: list[str]) -> dict:
     scaler, lr = model.named_steps["standardscaler"], model.named_steps["logisticregression"]
     return {
         "features": features,
+        "columns": feature_names(features),
         "scaler_mean": scaler.mean_.tolist(),
         "scaler_scale": scaler.scale_.tolist(),
         "coef": lr.coef_[0].tolist(),
