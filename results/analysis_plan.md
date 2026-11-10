@@ -161,3 +161,27 @@ Written **after** the dev results in sections 1–10 were seen, and **before** t
 
 ## A6. Dry run
 `scripts/analyse_final.py --partition dev` runs the identical analysis code on dev. Because the frozen gates were fit on dev, these numbers are **in-sample**, not results. The dry run exists only to show that the tables and figures are produced. Its outputs go to `results/final_dryrun_dev/` and `figures/final_dryrun_dev/` and are labelled as a dry run.
+
+---
+
+# Amendment B (2026-11-11): how the two models are combined for H2 and H3
+
+Written before the `pre-final` tag and before the test split is touched. It changes only how per-model decisions are combined into an overall label. The per-model decision rules (section 5 / A4 for H2, section 8 for H3), the gates, the thresholds and `results/frozen_gates.json` are unchanged.
+
+## B1. H3 across both models
+- **Per model** (always reported): H3 holds for a model iff both section-8 conditions hold for it:
+  1. the confidence gate's AUROC CI for adversarial minus random lies entirely below 0;
+  2. the blur-minus-confidence difference-in-differences CI lies entirely above 0.
+- **Overall:**
+  - **"supported"**: both conditions hold for **both** models;
+  - **"mixed"**: they hold for exactly one model;
+  - **"not supported"**: otherwise.
+
+## B2. H2 across both models
+Uses the per-model CI of the paired B − A difference in AUROC (A4).
+- **"supported"**: the CI is entirely above 0 for both models.
+- **"mixed"**: it is entirely above 0 for one model and includes 0 for the other.
+- **"reversal"**: it is entirely above 0 for one model and entirely below 0 for the other. Both models are reported, and **no pooled claim** is made.
+- **"not supported"**: otherwise. That covers both CIs including 0, one including 0 with the other below 0, and both below 0.
+
+Per-model results are always reported next to the overall label.
