@@ -1,0 +1,3 @@
+model,conf_gate_auroc_adv_minus_random,ci_low_1,ci_high_1,condition_1_conf_degrades_on_adversarial,did_blur_minus_conf,ci_low_2,ci_high_2,condition_2_reliance_holds_up_better,h3_supported,verdict
+qwen2vl_2b,-0.1168233367209427,-0.2633080296851811,0.00504812219596995,False,0.02137443745979417,-0.1538331361491311,0.21361316304957192,False,False,NOT supported (negative / inconclusive result)
+llava15_7b_fp16,-0.07932681935056074,-0.16905625722939358,0.006783887786323257,False,-0.10813097441248043,-0.2851824435330699,0.05428023790514117,False,False,NOT supported (negative / inconclusive result)

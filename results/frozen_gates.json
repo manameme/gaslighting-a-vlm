@@ -1,0 +1,261 @@
+{
+  "_note": "Fit on the dev split only (scripts/fit_gates_dev.py). Apply unchanged to test in run_final.py --final.",
+  "git_commit": "b2e089e9ff3538ec1af8f20baea5126de31ad9f9",
+  "seed": 0,
+  "k_folds": 5,
+  "n_boot": 1000,
+  "versions": {
+    "python": "3.13.2",
+    "platform": "macOS-14.5-arm64-arm-64bit-Mach-O",
+    "numpy": "2.5.4",
+    "torch": null,
+    "transformers": null,
+    "accelerate": null,
+    "bitsandbytes": null,
+    "pillow": "13.0.0"
+  },
+  "analysis_plan": "results/analysis_plan.md",
+  "h2_overall": "mixed",
+  "models": {
+    "qwen2vl_2b": {
+      "empirical_pi_dev": 0.135,
+      "n_rows": 7200,
+      "n_flips": 3790,
+      "gates": {
+        "conf_gate": {
+          "type": "single_signal",
+          "signal": "conf1",
+          "rule": "accept a flip iff -conf1 > threshold (i.e. conf1 < -threshold)",
+          "thresholds": {
+            "empirical_pi": -0.5511797960019359,
+            "pi_0.1": -0.5511797960019359,
+            "pi_0.3": -0.7448770549605814,
+            "pi_0.5": -0.8917780036447476
+          }
+        },
+        "reliance_blur_gate": {
+          "type": "single_signal",
+          "signal": "reliance_blur",
+          "rule": "accept a flip iff -reliance_blur > threshold (i.e. reliance_blur < -threshold)",
+          "thresholds": {
+            "empirical_pi": 0.09575874347697211,
+            "pi_0.1": 0.13711165523938318,
+            "pi_0.3": 0.09575874347697211,
+            "pi_0.5": -0.3533236751941399
+          }
+        },
+        "reliance_blank_gate": {
+          "type": "single_signal",
+          "signal": "reliance_blank",
+          "rule": "accept a flip iff -reliance_blank > threshold (i.e. reliance_blank < -threshold)",
+          "thresholds": {
+            "empirical_pi": -0.15431257274916776,
+            "pi_0.1": 0.03340618041061677,
+            "pi_0.3": -0.24136441835572714,
+            "pi_0.5": -0.3869127842217501
+          }
+        },
+        "shift_gate": {
+          "type": "single_signal",
+          "signal": "shift_to_claim",
+          "rule": "accept a flip iff -shift_to_claim > threshold (i.e. shift_to_claim < -threshold)",
+          "thresholds": {
+            "empirical_pi": -1.3875456796651746,
+            "pi_0.1": 0.9756302179698654,
+            "pi_0.3": -2.392273631086061,
+            "pi_0.5": -3.7055846866631184
+          }
+        },
+        "learned_A_conf_shift": {
+          "type": "learned_logistic",
+          "features": [
+            "conf1",
+            "shift_to_claim"
+          ],
+          "scaler_mean": [
+            0.8743090017970595,
+            3.8677776537316255
+          ],
+          "scaler_scale": [
+            0.12708876559011406,
+            1.563918767932418
+          ],
+          "coef": [
+            -0.3844658225323111,
+            -1.0071809653875392
+          ],
+          "intercept": -2.427701799542825,
+          "score": "P(good revision) = sigmoid(intercept + sum(coef * (x - mean) / scale))",
+          "rule": "accept a flip iff P(good revision) > threshold",
+          "thresholds": {
+            "empirical_pi": 0.4543436637789707,
+            "pi_0.1": 0.7498868433150006,
+            "pi_0.3": 0.23105902177333346,
+            "pi_0.5": 0.08587168629323287
+          }
+        },
+        "learned_B_conf_shift_reliance": {
+          "type": "learned_logistic",
+          "features": [
+            "conf1",
+            "shift_to_claim",
+            "reliance_blur",
+            "reliance_blank"
+          ],
+          "scaler_mean": [
+            0.8743090017970595,
+            3.8677776537316255,
+            0.36587620974901086,
+            0.4029588058961526
+          ],
+          "scaler_scale": [
+            0.12708876559011406,
+            1.563918767932418,
+            0.3113114790611345,
+            0.1739780446878948
+          ],
+          "coef": [
+            0.18682986912060504,
+            -0.7331654410549362,
+            -0.5474393641436952,
+            -0.771509452712167
+          ],
+          "intercept": -2.6679835701972294,
+          "score": "P(good revision) = sigmoid(intercept + sum(coef * (x - mean) / scale))",
+          "rule": "accept a flip iff P(good revision) > threshold",
+          "thresholds": {
+            "empirical_pi": 0.4737679849701932,
+            "pi_0.1": 0.6022561326837529,
+            "pi_0.3": 0.2396154593990948,
+            "pi_0.5": 0.11426406028044322
+          }
+        }
+      }
+    },
+    "llava15_7b_fp16": {
+      "empirical_pi_dev": 0.13333333333333333,
+      "n_rows": 7200,
+      "n_flips": 3375,
+      "gates": {
+        "conf_gate": {
+          "type": "single_signal",
+          "signal": "conf1",
+          "rule": "accept a flip iff -conf1 > threshold (i.e. conf1 < -threshold)",
+          "thresholds": {
+            "empirical_pi": -0.5195201671441468,
+            "pi_0.1": -0.5195201671441468,
+            "pi_0.3": -0.6261240401767139,
+            "pi_0.5": -0.8976863731874545
+          }
+        },
+        "reliance_blur_gate": {
+          "type": "single_signal",
+          "signal": "reliance_blur",
+          "rule": "accept a flip iff -reliance_blur > threshold (i.e. reliance_blur < -threshold)",
+          "thresholds": {
+            "empirical_pi": 0.3542511797958069,
+            "pi_0.1": 0.3542511797958069,
+            "pi_0.3": 0.10524066646172803,
+            "pi_0.5": -0.6081421521508774
+          }
+        },
+        "reliance_blank_gate": {
+          "type": "single_signal",
+          "signal": "reliance_blank",
+          "rule": "accept a flip iff -reliance_blank > threshold (i.e. reliance_blank < -threshold)",
+          "thresholds": {
+            "empirical_pi": 0.3590782962562078,
+            "pi_0.1": 0.3796289067407599,
+            "pi_0.3": 0.1340754825691351,
+            "pi_0.5": -0.7467201935149546
+          }
+        },
+        "shift_gate": {
+          "type": "single_signal",
+          "signal": "shift_to_claim",
+          "rule": "accept a flip iff -shift_to_claim > threshold (i.e. shift_to_claim < -threshold)",
+          "thresholds": {
+            "empirical_pi": -0.5000064472842615,
+            "pi_0.1": -0.5000064472842615,
+            "pi_0.3": -2.54687173185925,
+            "pi_0.5": -3.390624958227576
+          }
+        },
+        "learned_A_conf_shift": {
+          "type": "learned_logistic",
+          "features": [
+            "conf1",
+            "shift_to_claim"
+          ],
+          "scaler_mean": [
+            0.857485735804823,
+            3.8008182499003724
+          ],
+          "scaler_scale": [
+            0.14022382689647944,
+            1.5771912323999475
+          ],
+          "coef": [
+            -0.26231971315299973,
+            -1.1402788980299376
+          ],
+          "intercept": -2.546324384615571,
+          "score": "P(good revision) = sigmoid(intercept + sum(coef * (x - mean) / scale))",
+          "rule": "accept a flip iff P(good revision) > threshold",
+          "thresholds": {
+            "empirical_pi": 0.5991788693368989,
+            "pi_0.1": 0.5991788693368989,
+            "pi_0.3": 0.17618469835979902,
+            "pi_0.5": 0.09073940840805012
+          }
+        },
+        "learned_B_conf_shift_reliance": {
+          "type": "learned_logistic",
+          "features": [
+            "conf1",
+            "shift_to_claim",
+            "reliance_blur",
+            "reliance_blank"
+          ],
+          "scaler_mean": [
+            0.857485735804823,
+            3.8008182499003724,
+            0.41155938908922474,
+            0.5618416296763933
+          ],
+          "scaler_scale": [
+            0.14022382689647944,
+            1.5771912323999475,
+            0.39448849443302275,
+            0.4735616909443658
+          ],
+          "coef": [
+            -0.4092766511958109,
+            -0.8223380039021875,
+            0.28761106363080496,
+            -0.4782727193644231
+          ],
+          "intercept": -2.5482855602605614,
+          "score": "P(good revision) = sigmoid(intercept + sum(coef * (x - mean) / scale))",
+          "rule": "accept a flip iff P(good revision) > threshold",
+          "thresholds": {
+            "empirical_pi": 0.5577352235393656,
+            "pi_0.1": 0.6758147631177401,
+            "pi_0.3": 0.16724156046320232,
+            "pi_0.5": 0.11182444629673449
+          }
+        }
+      }
+    }
+  },
+  "oracle_ceiling": {
+    "qwen2vl_2b": {
+      "eir_max": 0.525369299935774,
+      "ecr_max": 0.5329218106995884
+    },
+    "llava15_7b_fp16": {
+      "eir_max": 0.4716346153846154,
+      "ecr_max": 0.45
+    }
+  }
+}
