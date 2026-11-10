@@ -21,9 +21,9 @@ if [ -z "${SLURM_JOB_ID:-}" ]; then
     exit 1
 fi
 
-module load anaconda
-eval "$(conda shell.bash hook)"
-conda activate mySC4001
+# Conda fails on the NFS home (symlink loop), so we use a uv venv (see README).
+module load python/3.11
+source "$HOME/venvs/vlmsyc/bin/activate"
 cd "$SLURM_SUBMIT_DIR" || exit 1
 
 # Model weights are cached in the home directory, so they download only once.

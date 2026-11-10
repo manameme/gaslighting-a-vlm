@@ -23,8 +23,9 @@ if [ -z "${SLURM_JOB_ID:-}" ]; then
     exit 1
 fi
 
-module load anaconda
-source activate mySC4001
+# Conda fails on the NFS home (symlink loop), so we use a uv venv (see README).
+module load python/3.11
+source "$HOME/venvs/vlmsyc/bin/activate"
 
 # Logs go to the folder sbatch was called from, so stay there.
 cd "$SLURM_SUBMIT_DIR" || exit 1
