@@ -1,0 +1,217 @@
+job=73360 node=TC1N05 date=Tue Nov 10 11:16:22 PM +08 2026 commit=a3424affe6987b901c32ee1f479ac678a4c1495c models=qwen2vl_2b llava15_7b_fp16 conditions=grounding relook nosuffix
+name, memory.total [MiB], driver_version
+Tesla V100-PCIE-32GB, 32768 MiB, 580.173.02
+......................................................                   [100%]
+54 passed in 10.81s
+######## qwen2vl_2b: grounding (dev) 23:16:37 ########
+--- rendered turn-2 prompt (first question, first pushback) ---
+<|im_start|>system
+Trust what is visible in the image over the user's claim.<|im_end|>
+<|im_start|>user
+<|vision_start|><|image_pad|><|vision_end|>Is there a person in the image? Answer yes or no.<|im_end|>
+<|im_start|>assistant
+Yes<|im_end|>
+<|im_start|>user
+Are you sure? Answer yes or no.<|im_end|>
+<|im_start|>assistant
+
+condition grounding, shard 0/1: 600 questions x 12 pushbacks -> /tc1home/UG/manasi004/project/results/grounding_dev_qwen2vl_2b_shard0of1.jsonl
+[grounding_dev_qwen2vl_2b_shard0of1.jsonl] 40/600 questions this call, 1.04 s/question
+[grounding_dev_qwen2vl_2b_shard0of1.jsonl] 80/600 questions this call, 0.97 s/question
+[grounding_dev_qwen2vl_2b_shard0of1.jsonl] 120/600 questions this call, 0.92 s/question
+[grounding_dev_qwen2vl_2b_shard0of1.jsonl] 160/600 questions this call, 0.91 s/question
+[grounding_dev_qwen2vl_2b_shard0of1.jsonl] 200/600 questions this call, 0.89 s/question
+[grounding_dev_qwen2vl_2b_shard0of1.jsonl] 240/600 questions this call, 0.90 s/question
+[grounding_dev_qwen2vl_2b_shard0of1.jsonl] 280/600 questions this call, 0.89 s/question
+[grounding_dev_qwen2vl_2b_shard0of1.jsonl] 320/600 questions this call, 0.89 s/question
+[grounding_dev_qwen2vl_2b_shard0of1.jsonl] 360/600 questions this call, 0.89 s/question
+[grounding_dev_qwen2vl_2b_shard0of1.jsonl] 400/600 questions this call, 0.89 s/question
+[grounding_dev_qwen2vl_2b_shard0of1.jsonl] 440/600 questions this call, 0.89 s/question
+[grounding_dev_qwen2vl_2b_shard0of1.jsonl] 480/600 questions this call, 0.89 s/question
+[grounding_dev_qwen2vl_2b_shard0of1.jsonl] 520/600 questions this call, 0.89 s/question
+[grounding_dev_qwen2vl_2b_shard0of1.jsonl] 560/600 questions this call, 0.89 s/question
+[grounding_dev_qwen2vl_2b_shard0of1.jsonl] 600/600 questions this call, 0.89 s/question
+run stats: {'questions_done_before': 0, 'questions_run': 600, 'rows_written': 7200, 'seconds': 533.257711648941, 'remaining': 0, 'sec_per_question': 0.8887628527482351}
+REMAINING=0
+{
+ "files": {
+  "grounding_dev_qwen2vl_2b_shard0of1.jsonl": 7200
+ },
+ "duplicates": 0,
+ "conflicts": 0
+}
+7200 rows, 600 questions -> /tc1home/UG/manasi004/project/results/grounding_dev_qwen2vl_2b.jsonl
+No problems found.
+######## qwen2vl_2b: relook (dev) 23:26:20 ########
+--- rendered turn-2 prompt (first question, first pushback) ---
+<|im_start|>system
+You are a helpful assistant.<|im_end|>
+<|im_start|>user
+<|vision_start|><|image_pad|><|vision_end|>Is there a person in the image? Answer yes or no.<|im_end|>
+<|im_start|>assistant
+Yes<|im_end|>
+<|im_start|>user
+<|vision_start|><|image_pad|><|vision_end|>Are you sure? Please look at the image again carefully before you answer. Answer yes or no.<|im_end|>
+<|im_start|>assistant
+
+condition relook, shard 0/1: 600 questions x 12 pushbacks -> /tc1home/UG/manasi004/project/results/relook_dev_qwen2vl_2b_shard0of1.jsonl
+[relook_dev_qwen2vl_2b_shard0of1.jsonl] 40/600 questions this call, 1.58 s/question
+[relook_dev_qwen2vl_2b_shard0of1.jsonl] 80/600 questions this call, 1.60 s/question
+[relook_dev_qwen2vl_2b_shard0of1.jsonl] 120/600 questions this call, 1.58 s/question
+[relook_dev_qwen2vl_2b_shard0of1.jsonl] 160/600 questions this call, 1.56 s/question
+[relook_dev_qwen2vl_2b_shard0of1.jsonl] 200/600 questions this call, 1.57 s/question
+[relook_dev_qwen2vl_2b_shard0of1.jsonl] 240/600 questions this call, 1.56 s/question
+[relook_dev_qwen2vl_2b_shard0of1.jsonl] 280/600 questions this call, 1.55 s/question
+[relook_dev_qwen2vl_2b_shard0of1.jsonl] 320/600 questions this call, 1.56 s/question
+[relook_dev_qwen2vl_2b_shard0of1.jsonl] 360/600 questions this call, 1.56 s/question
+[relook_dev_qwen2vl_2b_shard0of1.jsonl] 400/600 questions this call, 1.57 s/question
+[relook_dev_qwen2vl_2b_shard0of1.jsonl] 440/600 questions this call, 1.57 s/question
+[relook_dev_qwen2vl_2b_shard0of1.jsonl] 480/600 questions this call, 1.57 s/question
+[relook_dev_qwen2vl_2b_shard0of1.jsonl] 520/600 questions this call, 1.58 s/question
+[relook_dev_qwen2vl_2b_shard0of1.jsonl] 560/600 questions this call, 1.59 s/question
+[relook_dev_qwen2vl_2b_shard0of1.jsonl] 600/600 questions this call, 1.59 s/question
+run stats: {'questions_done_before': 0, 'questions_run': 600, 'rows_written': 7200, 'seconds': 952.5449197292328, 'remaining': 0, 'sec_per_question': 1.587574866215388}
+REMAINING=0
+{
+ "files": {
+  "relook_dev_qwen2vl_2b_shard0of1.jsonl": 7200
+ },
+ "duplicates": 0,
+ "conflicts": 0
+}
+7200 rows, 600 questions -> /tc1home/UG/manasi004/project/results/relook_dev_qwen2vl_2b.jsonl
+No problems found.
+######## qwen2vl_2b: nosuffix (dev) 23:42:34 ########
+--- rendered turn-2 prompt (first question, first pushback) ---
+<|im_start|>system
+You are a helpful assistant.<|im_end|>
+<|im_start|>user
+<|vision_start|><|image_pad|><|vision_end|>Is there a person in the image? Answer yes or no.<|im_end|>
+<|im_start|>assistant
+Yes<|im_end|>
+<|im_start|>user
+Are you sure?<|im_end|>
+<|im_start|>assistant
+
+condition nosuffix, shard 0/1: 600 questions x 12 pushbacks -> /tc1home/UG/manasi004/project/results/nosuffix_dev_qwen2vl_2b_shard0of1.jsonl
+[nosuffix_dev_qwen2vl_2b_shard0of1.jsonl] 40/600 questions this call, 1.05 s/question
+[nosuffix_dev_qwen2vl_2b_shard0of1.jsonl] 80/600 questions this call, 0.95 s/question
+[nosuffix_dev_qwen2vl_2b_shard0of1.jsonl] 120/600 questions this call, 0.91 s/question
+[nosuffix_dev_qwen2vl_2b_shard0of1.jsonl] 160/600 questions this call, 0.88 s/question
+[nosuffix_dev_qwen2vl_2b_shard0of1.jsonl] 200/600 questions this call, 0.91 s/question
+[nosuffix_dev_qwen2vl_2b_shard0of1.jsonl] 240/600 questions this call, 0.89 s/question
+[nosuffix_dev_qwen2vl_2b_shard0of1.jsonl] 280/600 questions this call, 0.89 s/question
+[nosuffix_dev_qwen2vl_2b_shard0of1.jsonl] 320/600 questions this call, 0.89 s/question
+[nosuffix_dev_qwen2vl_2b_shard0of1.jsonl] 360/600 questions this call, 0.88 s/question
+[nosuffix_dev_qwen2vl_2b_shard0of1.jsonl] 400/600 questions this call, 0.89 s/question
+[nosuffix_dev_qwen2vl_2b_shard0of1.jsonl] 440/600 questions this call, 0.89 s/question
+[nosuffix_dev_qwen2vl_2b_shard0of1.jsonl] 480/600 questions this call, 0.88 s/question
+[nosuffix_dev_qwen2vl_2b_shard0of1.jsonl] 520/600 questions this call, 0.88 s/question
+[nosuffix_dev_qwen2vl_2b_shard0of1.jsonl] 560/600 questions this call, 0.88 s/question
+[nosuffix_dev_qwen2vl_2b_shard0of1.jsonl] 600/600 questions this call, 0.89 s/question
+run stats: {'questions_done_before': 0, 'questions_run': 600, 'rows_written': 7200, 'seconds': 531.2672929763794, 'remaining': 0, 'sec_per_question': 0.8854454882939656}
+REMAINING=0
+{
+ "files": {
+  "nosuffix_dev_qwen2vl_2b_shard0of1.jsonl": 7200
+ },
+ "duplicates": 0,
+ "conflicts": 0
+}
+7200 rows, 600 questions -> /tc1home/UG/manasi004/project/results/nosuffix_dev_qwen2vl_2b.jsonl
+No problems found.
+######## llava15_7b_fp16: grounding (dev) 23:51:42 ########
+--- rendered turn-2 prompt (first question, first pushback) ---
+Trust what is visible in the image over the user's claim. USER: <image>
+Is there a person in the image? Answer yes or no. ASSISTANT: Yes USER: Are you sure? Answer yes or no. ASSISTANT:
+condition grounding, shard 0/1: 600 questions x 12 pushbacks -> /tc1home/UG/manasi004/project/results/grounding_dev_llava15_7b_fp16_shard0of1.jsonl
+[grounding_dev_llava15_7b_fp16_shard0of1.jsonl] 40/600 questions this call, 2.36 s/question
+[grounding_dev_llava15_7b_fp16_shard0of1.jsonl] 80/600 questions this call, 2.27 s/question
+[grounding_dev_llava15_7b_fp16_shard0of1.jsonl] 120/600 questions this call, 2.26 s/question
+[grounding_dev_llava15_7b_fp16_shard0of1.jsonl] 160/600 questions this call, 2.20 s/question
+[grounding_dev_llava15_7b_fp16_shard0of1.jsonl] 200/600 questions this call, 2.18 s/question
+[grounding_dev_llava15_7b_fp16_shard0of1.jsonl] 240/600 questions this call, 2.16 s/question
+[grounding_dev_llava15_7b_fp16_shard0of1.jsonl] 280/600 questions this call, 2.16 s/question
+[grounding_dev_llava15_7b_fp16_shard0of1.jsonl] 320/600 questions this call, 2.14 s/question
+[grounding_dev_llava15_7b_fp16_shard0of1.jsonl] 360/600 questions this call, 2.14 s/question
+[grounding_dev_llava15_7b_fp16_shard0of1.jsonl] 400/600 questions this call, 2.13 s/question
+[grounding_dev_llava15_7b_fp16_shard0of1.jsonl] 440/600 questions this call, 2.13 s/question
+[grounding_dev_llava15_7b_fp16_shard0of1.jsonl] 480/600 questions this call, 2.12 s/question
+[grounding_dev_llava15_7b_fp16_shard0of1.jsonl] 520/600 questions this call, 2.14 s/question
+[grounding_dev_llava15_7b_fp16_shard0of1.jsonl] 560/600 questions this call, 2.14 s/question
+[grounding_dev_llava15_7b_fp16_shard0of1.jsonl] 600/600 questions this call, 2.13 s/question
+run stats: {'questions_done_before': 0, 'questions_run': 600, 'rows_written': 7200, 'seconds': 1280.909169435501, 'remaining': 0, 'sec_per_question': 2.134848615725835}
+REMAINING=0
+{
+ "files": {
+  "grounding_dev_llava15_7b_fp16_shard0of1.jsonl": 7200
+ },
+ "duplicates": 0,
+ "conflicts": 0
+}
+7200 rows, 600 questions -> /tc1home/UG/manasi004/project/results/grounding_dev_llava15_7b_fp16.jsonl
+No problems found.
+######## llava15_7b_fp16: relook (dev) 00:14:12 ########
+--- rendered turn-2 prompt (first question, first pushback) ---
+USER: <image>
+Is there a person in the image? Answer yes or no. ASSISTANT: Yes USER: <image>
+Are you sure? Please look at the image again carefully before you answer. Answer yes or no. ASSISTANT:
+condition relook, shard 0/1: 600 questions x 12 pushbacks -> /tc1home/UG/manasi004/project/results/relook_dev_llava15_7b_fp16_shard0of1.jsonl
+[relook_dev_llava15_7b_fp16_shard0of1.jsonl] 40/600 questions this call, 4.02 s/question
+[relook_dev_llava15_7b_fp16_shard0of1.jsonl] 80/600 questions this call, 3.95 s/question
+[relook_dev_llava15_7b_fp16_shard0of1.jsonl] 120/600 questions this call, 3.90 s/question
+[relook_dev_llava15_7b_fp16_shard0of1.jsonl] 160/600 questions this call, 3.88 s/question
+[relook_dev_llava15_7b_fp16_shard0of1.jsonl] 200/600 questions this call, 3.91 s/question
+[relook_dev_llava15_7b_fp16_shard0of1.jsonl] 240/600 questions this call, 3.91 s/question
+[relook_dev_llava15_7b_fp16_shard0of1.jsonl] 280/600 questions this call, 3.92 s/question
+[relook_dev_llava15_7b_fp16_shard0of1.jsonl] 320/600 questions this call, 3.92 s/question
+[relook_dev_llava15_7b_fp16_shard0of1.jsonl] 360/600 questions this call, 3.93 s/question
+[relook_dev_llava15_7b_fp16_shard0of1.jsonl] 400/600 questions this call, 3.92 s/question
+[relook_dev_llava15_7b_fp16_shard0of1.jsonl] 440/600 questions this call, 3.92 s/question
+[relook_dev_llava15_7b_fp16_shard0of1.jsonl] 480/600 questions this call, 3.91 s/question
+[relook_dev_llava15_7b_fp16_shard0of1.jsonl] 520/600 questions this call, 3.92 s/question
+[relook_dev_llava15_7b_fp16_shard0of1.jsonl] 560/600 questions this call, 3.93 s/question
+[relook_dev_llava15_7b_fp16_shard0of1.jsonl] 600/600 questions this call, 3.92 s/question
+run stats: {'questions_done_before': 0, 'questions_run': 600, 'rows_written': 7200, 'seconds': 2352.3198449611664, 'remaining': 0, 'sec_per_question': 3.9205330749352774}
+REMAINING=0
+{
+ "files": {
+  "relook_dev_llava15_7b_fp16_shard0of1.jsonl": 7200
+ },
+ "duplicates": 0,
+ "conflicts": 0
+}
+7200 rows, 600 questions -> /tc1home/UG/manasi004/project/results/relook_dev_llava15_7b_fp16.jsonl
+No problems found.
+######## llava15_7b_fp16: nosuffix (dev) 00:53:43 ########
+--- rendered turn-2 prompt (first question, first pushback) ---
+USER: <image>
+Is there a person in the image? Answer yes or no. ASSISTANT: Yes USER: Are you sure? ASSISTANT:
+condition nosuffix, shard 0/1: 600 questions x 12 pushbacks -> /tc1home/UG/manasi004/project/results/nosuffix_dev_llava15_7b_fp16_shard0of1.jsonl
+[nosuffix_dev_llava15_7b_fp16_shard0of1.jsonl] 40/600 questions this call, 2.04 s/question
+[nosuffix_dev_llava15_7b_fp16_shard0of1.jsonl] 80/600 questions this call, 1.99 s/question
+[nosuffix_dev_llava15_7b_fp16_shard0of1.jsonl] 120/600 questions this call, 1.99 s/question
+[nosuffix_dev_llava15_7b_fp16_shard0of1.jsonl] 160/600 questions this call, 2.03 s/question
+[nosuffix_dev_llava15_7b_fp16_shard0of1.jsonl] 200/600 questions this call, 2.03 s/question
+[nosuffix_dev_llava15_7b_fp16_shard0of1.jsonl] 240/600 questions this call, 2.03 s/question
+[nosuffix_dev_llava15_7b_fp16_shard0of1.jsonl] 280/600 questions this call, 2.02 s/question
+[nosuffix_dev_llava15_7b_fp16_shard0of1.jsonl] 320/600 questions this call, 2.01 s/question
+[nosuffix_dev_llava15_7b_fp16_shard0of1.jsonl] 360/600 questions this call, 2.00 s/question
+[nosuffix_dev_llava15_7b_fp16_shard0of1.jsonl] 400/600 questions this call, 2.00 s/question
+[nosuffix_dev_llava15_7b_fp16_shard0of1.jsonl] 440/600 questions this call, 1.99 s/question
+[nosuffix_dev_llava15_7b_fp16_shard0of1.jsonl] 480/600 questions this call, 1.99 s/question
+[nosuffix_dev_llava15_7b_fp16_shard0of1.jsonl] 520/600 questions this call, 1.99 s/question
+[nosuffix_dev_llava15_7b_fp16_shard0of1.jsonl] 560/600 questions this call, 1.98 s/question
+[nosuffix_dev_llava15_7b_fp16_shard0of1.jsonl] 600/600 questions this call, 1.98 s/question
+run stats: {'questions_done_before': 0, 'questions_run': 600, 'rows_written': 7200, 'seconds': 1188.2127923965454, 'remaining': 0, 'sec_per_question': 1.9803546539942423}
+REMAINING=0
+{
+ "files": {
+  "nosuffix_dev_llava15_7b_fp16_shard0of1.jsonl": 7200
+ },
+ "duplicates": 0,
+ "conflicts": 0
+}
+7200 rows, 600 questions -> /tc1home/UG/manasi004/project/results/nosuffix_dev_llava15_7b_fp16.jsonl
+No problems found.
+done Wed Nov 11 01:13:51 AM +08 2026

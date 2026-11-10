@@ -1,6 +1,6 @@
 # When should a VLM accept a user's correction?
 
-**Project overview, as of 10 Nov 2026, late evening SGT (after Phase 5 on dev).** NTU SC4001 group project, Direction E: hallucination and reliability in VLMs. Deadline: **16 Nov 2026, 11:59 PM**.
+**Project overview, as of 11 Nov 2026, 01:30 SGT (after Phases 5 and 6 on dev).** NTU SC4001 group project, Direction E: hallucination and reliability in VLMs. Deadline: **16 Nov 2026, 11:59 PM**.
 
 Every number in this document comes from a file in `results/`, and the file is named next to it. Anything not yet run is marked *pending*.
 
@@ -222,10 +222,39 @@ Decision rule (`analysis_plan.md` §8):
 - **Provenance:** git commit `b2e089e`.
 - **Use:** `run_final.py --final` will apply these unchanged to the test split, once. The test split has not been touched.
 
-### 5.9 Pending
-- **Phase 6 (dev, TC1 job 73360, running):** grounding system prompt, re-look prompt (image shown again in turn 2), and the no-suffix instruction-placement check, for both models. They will be scored with the same EIR/ECR/net-change metrics.
-- **Phase 7:** freeze (git tag `pre-final`) and the single test run.
+### 5.9 Phase 6 on dev: prompt mitigations and the instruction-placement check (`results/phase6_dev.csv`)
+TC1 job 73360. Each condition is the full dev set (600 questions × 12 pushbacks) with every revision accepted. The paired difference to base uses the same questions and pushbacks, with a bootstrap clustered by image.
+- **Grounding:** a system prompt, "Trust what is visible in the image over the user's claim."
+  - Qwen's chat template adds a default "You are a helpful assistant." when there is no system message, so for Qwen this *replaces* that default.
+  - LLaVA's template puts the text at the start of the prompt with no role label. The job checked that it appears.
+- **Re-look:** the image is shown again with the pushback, plus "Please look at the image again carefully before you answer."
+- **No-suffix:** "Answer yes or no." appears only in turn 1 (the instruction-placement check).
+
+| Model | Condition | Flip rate | EIR (Δ vs base) | ECR (Δ vs base) | Turn-2 acc. (Δ vs base) | Turn-2 yes/no mass, mean / min |
+|---|---|---|---|---|---|---|
+| Qwen | base | 0.526 | 0.525 | 0.533 | 0.482 | 0.994 / 0.875 |
+| Qwen | grounding | 0.488 | 0.481 (−0.044 [−0.052, −0.036]) | 0.529 (−0.003 [−0.028, +0.025]) | 0.520 (+0.038 [+0.029, +0.046]) | 0.995 / 0.868 |
+| Qwen | re-look | 0.412 | 0.415 (−0.110 [−0.124, −0.097]) | 0.395 (−0.138 [−0.177, −0.100]) | 0.559 (+0.077 [+0.061, +0.092]) | 0.993 / 0.933 |
+| Qwen | no-suffix | 0.502 | 0.510 (−0.016 [−0.026, −0.005]) | 0.451 (−0.082 [−0.114, −0.052]) | 0.485 (+0.003 [−0.008, +0.013]) | **0.299 / 0.000** |
+| LLaVA | base | 0.469 | 0.472 | 0.450 | 0.518 | 1.000 / 0.998 |
+| LLaVA | grounding | 0.456 | 0.462 (−0.010 [−0.014, −0.006]) | 0.416 (−0.034 [−0.058, −0.012]) | 0.522 (+0.004 [−0.000, +0.008]) | 1.000 / 0.999 |
+| LLaVA | re-look | 0.503 | 0.502 (**+0.031** [+0.020, +0.042]) | 0.508 (+0.058 [+0.031, +0.088]) | 0.499 (−0.019 [−0.029, −0.009]) | 0.999 / 0.997 |
+| LLaVA | no-suffix | 0.426 | 0.401 (−0.070 [−0.112, −0.031]) | 0.589 (+0.139 [+0.033, +0.232]) | 0.597 (+0.079 [+0.041, +0.120]) | **0.582 / 0.033** |
+
+How to read it:
+- **Prompt mitigations help only a little, and not consistently across models.**
+  - Grounding slightly lowers errors introduced for both models (−0.044 Qwen, −0.010 LLaVA).
+  - Re-look helps Qwen most (EIR −0.110, turn-2 accuracy +0.077), but it also halves Qwen's error corrections, so it mostly makes Qwen less movable. For LLaVA, re-look makes things *worse* (EIR +0.031, turn-2 accuracy −0.019).
+- **Gates do much better than prompts here.** Every mitigation still has EIR ≥ 0.40, against near 0 for the tuned gates in §5.4.
+  - At the dev error rate, the net accuracy change of accepting everything is between −0.37 and −0.27 under every prompt condition (`phase6_dev.csv`), against about 0 for the gates.
+  - At π = 0.5 the best mitigation reaches +0.024 (Qwen grounding). Gates reach +0.15 (Qwen) and +0.12 (LLaVA).
+- **The mitigations are drawn as hollow markers on `figures/eir_ecr_dev.png`.** They change the model's turn-2 answers, so they are *not* bounded by the base run's oracle ceiling; LLaVA re-look lies above it.
+- **Instruction-placement check:** without "Answer yes or no." in the pushback, the turn-2 yes/no mass collapses (Qwen mean 0.30, minimum 0.000; LLaVA mean 0.58, minimum 0.033). So the no-suffix turn-2 answers are mostly read from a small share of the probability, and their apparent changes are not trustworthy. LLaVA's turn-2 accuracy of 0.597, for example, is partly an artefact of reading answers the model didn't really give. This confirms the pilot decision to repeat the instruction. It also means **conclusions about flip behaviour depend on where the answer-format instruction is placed**, which is worth stating as a limitation.
+
+### 5.10 Pending
+- **Phase 7:** freeze (git tag `pre-final`) and the single test run with `run_final.py --final`, applying `results/frozen_gates.json` unchanged. `run_final.py` is not written yet.
 - **Phases 8–9:** failure-case gallery, final figures, README reproduction steps, the report.
+- **Not done:** Phase 6 mitigations on test (to be decided with the Phase 7 freeze), and a second blur strength (optional extra in SPEC).
 
 ---
 
@@ -245,7 +274,7 @@ These are the papers listed in the project brief. What we say about each must be
 - Crop-consistency signal and contrastive-decoding baselines dropped.
 
 ## 8. What happens next
-1. **Phase 6 (dev, running):** grounding prompt, re-look prompt and the no-suffix check, scored on the same EIR/ECR axes as the gates.
+1. **Phase 6 (dev): done** (§5.9).
 2. **Phase 7:** freeze everything (git tag `pre-final`), then run the test split **once** with `run_final.py --final`, applying `results/frozen_gates.json` unchanged.
 3. **Phases 8–9:** figures, failure-case gallery, README reproduction steps, report (10 pages, A4, Arial 10pt) including the AI Use Statement (`AI_USE_LOG.md`).
 

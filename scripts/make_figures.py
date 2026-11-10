@@ -36,6 +36,8 @@ SERIES = {  # gate -> (label, colour, dash)
     "learned_B_conf_shift_reliance": ("Learned B: A + reliance", "#e87ba4", (0, (1, 1))),
 }
 SPLIT_STYLE = {"random": ("#2a78d6", "-"), "popular": ("#eb6834", (0, (6, 2))), "adversarial": ("#1baf7a", (0, (2, 1.5)))}
+# Prompt mitigations drawn as hollow markers (no-suffix is a robustness check, not plotted).
+MITIGATION_MARKERS = {"grounding": ("Grounding prompt (accept all)", "s"), "relook": ("Re-look prompt (accept all)", "D")}
 MODEL_TITLE = {"qwen2vl_2b": "Qwen2-VL-2B", "llava15_7b_fp16": "LLaVA-1.5-7B (fp16)"}
 
 plt.rcParams.update({
@@ -62,6 +64,7 @@ def models_in(rows):
 
 def eir_ecr_figure():
     curves, rand, gates = read("gate_curves_dev.csv"), read("random_gate_dev.csv"), read("gates_dev.csv")
+    phase6 = read("phase6_dev.csv") if (results_dir() / "phase6_dev.csv").exists() else []
     models = models_in(curves)
     fig, axes = plt.subplots(1, len(models), figsize=(3.4 * len(models), 3.3), sharey=True)
     axes = [axes] if len(models) == 1 else axes
@@ -83,17 +86,27 @@ def eir_ecr_figure():
                    if r["model"] == m and r["gate"] == g and r["evaluation"] == "OOF"]
             ax.plot([p[0] for p in pts], [p[1] for p in pts], color=col, ls=dash, label=label)
         ax.plot([eir_max], [ecr_max], marker="o", ms=6, color=INK2, ls="none", label="Always accept")
+        # Phase 6 prompt mitigations (every revision accepted), if scored.
+        for r in phase6:
+            if r["model"] == m and r["condition"] in MITIGATION_MARKERS:
+                label, marker = MITIGATION_MARKERS[r["condition"]]
+                ax.plot([float(r["eir"])], [float(r["ecr"])], marker=marker, ms=7, mfc="white", mec=INK,
+                        mew=1.3, ls="none", label=label)
         ax.set_title(MODEL_TITLE.get(m, m))
         ax.set_xlabel("EIR: errors introduced (lower is better)")
-        ax.set_xlim(0, eir_max * 1.03)
+        # Mitigations change turn 2 itself, so they can lie beyond always-accept; keep them in view.
+        x_right = max([eir_max] + [float(r["eir"]) for r in phase6
+                                   if r["model"] == m and r["condition"] in MITIGATION_MARKERS])
+        ax.set_xlim(0, x_right * 1.04)
     # Shared y-axis: set once, from the largest ceiling, so no panel's ceiling is cut off.
-    top = max(float(r["ecr"]) for r in gates if r["gate"] == "always_accept")
+    top = max([float(r["ecr"]) for r in gates if r["gate"] == "always_accept"]
+              + [float(r["ecr"]) for r in phase6 if r["condition"] in MITIGATION_MARKERS])
     axes[0].set_ylim(0, top * 1.15)
     axes[0].set_ylabel("ECR: errors corrected (higher is better)")
     handles, labels = axes[0].get_legend_handles_labels()
     fig.legend(handles, labels, loc="lower center", ncol=4, fontsize=7.5, bbox_to_anchor=(0.5, -0.02))
-    fig.suptitle("Gates on dev, out-of-fold (5-fold grouped by image)", fontsize=10, color=INK)
-    fig.tight_layout(rect=(0, 0.13, 1, 1))
+    fig.suptitle("Gates and prompt mitigations on dev, out-of-fold (5-fold grouped by image)", fontsize=10, color=INK)
+    fig.tight_layout(rect=(0, 0.17, 1, 1))
     out = FIG / "eir_ecr_dev.png"
     fig.savefig(out, dpi=200)
     print(f"wrote {out}")

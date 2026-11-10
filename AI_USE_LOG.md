@@ -64,3 +64,14 @@ Record of what Claude Code was used for in each session and what the team verifi
 - [ ] Look at `figures/eir_ecr_dev.png`, `figures/sensitivity_pi_dev.png` and `figures/reliability_by_split_dev.png`
 - [ ] Confirm H2 = mixed and H3 = not supported are reported as such (including the negative result)
 - [ ] Check the printed rendered prompts in the Phase 6 job log (system text and second image present)
+
+## 2026-11-11 (01:00–01:30): Phase 6 on dev scored
+
+**Claude Code was used for:**
+- Monitoring TC1 job 73360 (all six model × condition runs complete, all merge checks clean) and copying results and logs back.
+- Writing and running `scripts/score_phase6_dev.py`, which scores each condition on the EIR/ECR/net-change axes with paired, image-clustered bootstrap differences to base (`results/phase6_dev.csv`).
+- Adding the mitigation points to `figures/eir_ecr_dev.png` and writing the Phase 6 section of `report/PROJECT_OVERVIEW.md`. This includes the note that no-suffix turn-2 readings have low yes/no mass and are not trustworthy, and that Qwen's template adds a default system prompt.
+
+**Team verification:**
+- [ ] Read the rendered prompts for each condition in `results/logs_tc1/output_phase6_73360.out`
+- [ ] Check one row of `results/phase6_dev.csv` against the JSONL by hand
