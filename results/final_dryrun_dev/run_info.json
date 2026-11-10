@@ -1,0 +1,9 @@
+{
+  "status": "DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",
+  "partition": "dev",
+  "frozen_gates_sha256": "71979e78b8cd69a6281e3c04ef0c3502b1b62ff20473196ffd2caab39ccebe86",
+  "frozen_gates_commit": "90c5f8d49c29b21c97d245498eea527ece45ebfc",
+  "n_boot": 1000,
+  "seed": 0,
+  "h2_overall": "mixed"
+}

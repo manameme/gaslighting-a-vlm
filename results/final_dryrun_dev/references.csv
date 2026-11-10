@@ -1,0 +1,25 @@
+status,model,partition,reference,operating_point,pi,eir,ecr,net_change,accept_rate_among_flips
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",qwen2vl_2b,dev,always_accept,native_pi,0.135,0.525369299935774,0.5329218106995884,-0.38250000000000006,1.0
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",qwen2vl_2b,dev,never_accept,native_pi,0.135,0.0,0.0,0.0,0.0
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",qwen2vl_2b,dev,oracle,native_pi,0.135,0.0,0.5329218106995884,0.07194444444444445,0.1366754617414248
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",qwen2vl_2b,dev,always_accept,pi_0.1,0.1,0.525369299935774,0.5329218106995884,-0.4195401888722377,1.0
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",qwen2vl_2b,dev,never_accept,pi_0.1,0.1,0.0,0.0,0.0,0.0
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",qwen2vl_2b,dev,oracle,pi_0.1,0.1,0.0,0.5329218106995884,0.053292181069958845,0.1366754617414248
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",qwen2vl_2b,dev,always_accept,pi_0.3,0.3,0.525369299935774,0.5329218106995884,-0.20788196674516526,1.0
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",qwen2vl_2b,dev,never_accept,pi_0.3,0.3,0.0,0.0,0.0,0.0
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",qwen2vl_2b,dev,oracle,pi_0.3,0.3,0.0,0.5329218106995884,0.15987654320987651,0.1366754617414248
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",qwen2vl_2b,dev,always_accept,pi_0.5,0.5,0.525369299935774,0.5329218106995884,0.003776255381907234,1.0
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",qwen2vl_2b,dev,never_accept,pi_0.5,0.5,0.0,0.0,0.0,0.0
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",qwen2vl_2b,dev,oracle,pi_0.5,0.5,0.0,0.5329218106995884,0.2664609053497942,0.1366754617414248
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",llava15_7b_fp16,dev,always_accept,native_pi,0.13333333333333333,0.4716346153846154,0.45,-0.34875,1.0
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",llava15_7b_fp16,dev,never_accept,native_pi,0.13333333333333333,0.0,0.0,0.0,0.0
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",llava15_7b_fp16,dev,oracle,native_pi,0.13333333333333333,0.0,0.45,0.06,0.128
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",llava15_7b_fp16,dev,always_accept,pi_0.1,0.1,0.4716346153846154,0.45,-0.3794711538461539,1.0
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",llava15_7b_fp16,dev,never_accept,pi_0.1,0.1,0.0,0.0,0.0,0.0
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",llava15_7b_fp16,dev,oracle,pi_0.1,0.1,0.0,0.45,0.045000000000000005,0.128
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",llava15_7b_fp16,dev,always_accept,pi_0.3,0.3,0.4716346153846154,0.45,-0.1951442307692307,1.0
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",llava15_7b_fp16,dev,never_accept,pi_0.3,0.3,0.0,0.0,0.0,0.0
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",llava15_7b_fp16,dev,oracle,pi_0.3,0.3,0.0,0.45,0.135,0.128
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",llava15_7b_fp16,dev,always_accept,pi_0.5,0.5,0.4716346153846154,0.45,-0.010817307692307682,1.0
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",llava15_7b_fp16,dev,never_accept,pi_0.5,0.5,0.0,0.0,0.0,0.0
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",llava15_7b_fp16,dev,oracle,pi_0.5,0.5,0.0,0.45,0.225,0.128

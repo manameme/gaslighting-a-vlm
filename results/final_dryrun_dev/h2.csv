@@ -1,0 +1,5 @@
+status,model,partition,metric,gate_A,gate_B,difference_B_minus_A,ci_low,ci_high,decision,primary
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",qwen2vl_2b,dev,auroc_good_revision,0.8532535329601344,0.8768113205766017,0.02355778761646732,0.006888439578849565,0.04366219514501716,reliance adds information,True
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",qwen2vl_2b,dev,area,0.23889457144291942,0.24549029869089814,0.006595727247978717,0.0019122518082774077,0.012203421761444263,reliance adds information,False
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",llava15_7b_fp16,dev,auroc_good_revision,0.8372763053573451,0.8402478889014737,0.002971583544128631,-0.004866789217926345,0.009850083252910837,no clear effect (CI includes 0),True
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",llava15_7b_fp16,dev,area,0.17769981971153845,0.17833049545940172,0.0006306757478632685,-0.001024348738030064,0.0020669783207876787,no clear effect (CI includes 0),False

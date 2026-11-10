@@ -1,0 +1,31 @@
+status,model,partition,row,gate,pope_split,value,ci_low,ci_high
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",qwen2vl_2b,dev,split_auroc,conf_gate,random,0.8585002856210217,0.7941016359567642,0.9173203336176008
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",qwen2vl_2b,dev,split_auroc,conf_gate,popular,0.8517412669586583,0.775159022626395,0.915031905712114
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",qwen2vl_2b,dev,split_auroc,conf_gate,adversarial,0.741676948900079,0.6168027573038131,0.8356581519896878
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",qwen2vl_2b,dev,split_auroc,learned_A_conf_shift,random,0.8881436673739187,0.8304897620212506,0.9366873030283885
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",qwen2vl_2b,dev,split_auroc,learned_A_conf_shift,popular,0.8744097852793505,0.8112690077216845,0.9250383321567066
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",qwen2vl_2b,dev,split_auroc,learned_A_conf_shift,adversarial,0.7873022754304643,0.6931978658098715,0.8641492872012714
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",qwen2vl_2b,dev,split_auroc,learned_B_conf_shift_reliance,random,0.9006599885751592,0.8382182132063115,0.952572906233019
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",qwen2vl_2b,dev,split_auroc,learned_B_conf_shift_reliance,popular,0.9001068261937827,0.8484060946697896,0.9438473452927245
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",qwen2vl_2b,dev,split_auroc,learned_B_conf_shift_reliance,adversarial,0.8177932659708096,0.7319077904408178,0.8876849827102972
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",qwen2vl_2b,dev,split_auroc,reliance_blur_gate,random,0.8183399298188346,0.7098500064093078,0.9116097126553511
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",qwen2vl_2b,dev,split_auroc,reliance_blur_gate,popular,0.8438040807606025,0.7629512680886419,0.9166717227009763
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",qwen2vl_2b,dev,split_auroc,reliance_blur_gate,adversarial,0.7228910305576861,0.6205217083118943,0.8223686438731105
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",qwen2vl_2b,dev,conf_gate_adv_minus_random,,,-0.1168233367209427,-0.2633080296851811,0.00504812219596995
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",qwen2vl_2b,dev,did_blur_minus_conf,,,0.02137443745979417,-0.1538331361491311,0.21361316304957192
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",qwen2vl_2b,dev,verdict,NOT supported,,,,
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",llava15_7b_fp16,dev,split_auroc,conf_gate,random,0.8761100281568118,0.8115692723437756,0.9286898403878013
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",llava15_7b_fp16,dev,split_auroc,conf_gate,popular,0.7883314449480139,0.6928729939590347,0.8676507577383865
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",llava15_7b_fp16,dev,split_auroc,conf_gate,adversarial,0.7967832088062511,0.7196022084935344,0.8606868190957719
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",llava15_7b_fp16,dev,split_auroc,learned_A_conf_shift,random,0.9085174355642192,0.8579493123977976,0.9504500025839613
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",llava15_7b_fp16,dev,split_auroc,learned_A_conf_shift,popular,0.821064382831245,0.7298189157489493,0.8975684038125763
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",llava15_7b_fp16,dev,split_auroc,learned_A_conf_shift,adversarial,0.7893634341475555,0.7131812121990166,0.8565758299904861
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",llava15_7b_fp16,dev,split_auroc,learned_B_conf_shift_reliance,random,0.9148978413110966,0.8665550420819544,0.9539342799597402
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",llava15_7b_fp16,dev,split_auroc,learned_B_conf_shift_reliance,popular,0.8163906291655558,0.725471476477964,0.8938844887048324
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",llava15_7b_fp16,dev,split_auroc,learned_B_conf_shift_reliance,adversarial,0.793521826374162,0.7171050636489045,0.8600420392910089
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",llava15_7b_fp16,dev,split_auroc,reliance_blur_gate,random,0.7938415998844849,0.6882501159839884,0.8980274152472754
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",llava15_7b_fp16,dev,split_auroc,reliance_blur_gate,popular,0.7459260863769661,0.6170767227301519,0.8760853935227113
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",llava15_7b_fp16,dev,split_auroc,reliance_blur_gate,adversarial,0.6063838061214437,0.4989622767754916,0.7173210622483018
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",llava15_7b_fp16,dev,conf_gate_adv_minus_random,,,-0.07932681935056074,-0.16905625722939358,0.006783887786323257
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",llava15_7b_fp16,dev,did_blur_minus_conf,,,-0.10813097441248043,-0.2851824435330699,0.05428023790514117
+"DRY RUN on dev: frozen gates were fit on dev, so this is in-sample and NOT a result",llava15_7b_fp16,dev,verdict,NOT supported,,,,
