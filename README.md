@@ -16,7 +16,7 @@ A small open VLM answers a POPE yes/no question, the user pushes back, and we co
 | `scripts/` | `download_data.py`, `build_splits.py`, `pilot.py`, `run_baseline.py`, `merge_shards.py`, `run_signals.py`, `kaggle_runner.ipynb` |
 | `tests/` | CPU-only tests using a mock model |
 | `results/` | JSONL and CSV outputs, committed |
-| `slurm/` | SLURM job scripts for TC1: `job_smoke.sh`, `job_pilot.sh`, `job_dev.sh` |
+| `slurm/` | SLURM job scripts for TC1: `job_smoke.sh`, `job_pilot.sh`, `job_dev.sh`, `job_phase6.sh`, `job_final.sh` |
 | `requirements-gpu.txt` | Exact package versions of the GPU environment |
 
 ## Where outputs go
@@ -29,7 +29,8 @@ Run scripts append rows and force them to disk after every batch, take `--resume
 ```bash
 python3 -m venv .venv
 ./.venv/bin/pip install numpy pyyaml pillow pytest
-./.venv/bin/python -m pytest -q          # 52 tests, about 1 s
+./.venv/bin/pip install scikit-learn matplotlib   # for the gate analysis and figures
+./.venv/bin/python -m pytest -q          # 69 tests, a few seconds
 ```
 
 ## Data preparation
@@ -77,6 +78,16 @@ TC1 is reachable only from the NTU network (on campus or via the NTU VPN). Read 
    ```
    If a job times out, submit the same command again: every step uses `--resume`.
 5. Copy results back and commit them: `rsync -az tc1:~/project/results/ results/`.
+
+## Phase 7: the one test run (TC1)
+
+Only after the team has reviewed `results/analysis_plan.md` (including Amendment A) and the dev dry run.
+1. On the laptop: `git tag pre-final && git bundle create sc4001.bundle --all && scp sc4001.bundle tc1:~/`
+2. On TC1: `git clone ~/sc4001.bundle ~/final && cd ~/final && git checkout pre-final && sbatch slurm/job_final.sh`
+3. After a timeout: `sbatch --export=ALL,RESUME=1 slurm/job_final.sh` (resumes only if every header matches).
+4. Copy back `results/*_test_*.jsonl`, `results/final_test/` and `figures/final_test/`, and commit them. Never re-run to change numbers.
+
+The dry run of the same code on dev (no tag needed): `python scripts/run_final.py --dry-run-dev --resume`.
 
 ## Running on Kaggle (fallback)
 

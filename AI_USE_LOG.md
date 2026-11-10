@@ -75,3 +75,18 @@ Record of what Claude Code was used for in each session and what the team verifi
 **Team verification:**
 - [ ] Read the rendered prompts for each condition in `results/logs_tc1/output_phase6_73360.out`
 - [ ] Check one row of `results/phase6_dev.csv` against the JSONL by hand
+
+## 2026-11-11: Phase 7 preparation (no test data touched)
+
+**Claude Code was used for:**
+- Writing the team's headline choices and the confirmatory H2 rule into `results/analysis_plan.md` as Amendment A (commit c043521), before any final-run code. It records that learned gate A gained pushback type after the first dev analysis.
+- Adding pushback type to the learned gates, re-running the dev cross-validation and refreezing `results/frozen_gates.json` (commit 90c5f8d). The earlier dev H2 table is kept as `results/h2_dev_before_amendment_A.csv`.
+- Writing `src/vlmsyc/release.py` (tag and clean-tree check, never-overwrite and header-matched resume), `scripts/run_final.py`, `scripts/analyse_final.py` (frozen gates only; references; matched random gate; never-accept comparison; native π plus 0.1, 0.3 and 0.5) and `slurm/job_final.sh`, with 8 new tests (69 in total).
+- Running the dev dry run (`results/final_dryrun_dev/`, `figures/final_dryrun_dev/`, labelled in-sample and not a result).
+- Updating `report/PROJECT_OVERVIEW.md` and `README.md`. The `pre-final` tag was **not** created: it waits for team review.
+
+**Team verification (before the tag):**
+- [ ] Read Amendment A in `results/analysis_plan.md` and agree with it
+- [ ] Read `scripts/run_final.py` and `src/vlmsyc/release.py`; try `python scripts/run_final.py --final` on an untagged HEAD and see it refuse
+- [ ] Inspect `results/final_dryrun_dev/*.csv` and `figures/final_dryrun_dev/*.png`
+- [ ] Agree that `results/frozen_gates.json` (sha256 71979e78…) is what will be applied to test

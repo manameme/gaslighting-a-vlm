@@ -1,6 +1,6 @@
 # When should a VLM accept a user's correction?
 
-**Project overview, as of 11 Nov 2026, 01:30 SGT (after Phases 5 and 6 on dev).** NTU SC4001 group project, Direction E: hallucination and reliability in VLMs. Deadline: **16 Nov 2026, 11:59 PM**.
+**Project overview, as of 11 Nov 2026 (Phases 5–6 done on dev; Phase 7 prepared, waiting for team review before the `pre-final` tag).** NTU SC4001 group project, Direction E: hallucination and reliability in VLMs. Deadline: **16 Nov 2026, 11:59 PM**.
 
 Every number in this document comes from a file in `results/`, and the file is named next to it. Anything not yet run is marked *pending*.
 
@@ -70,7 +70,7 @@ The full plan, including decision rules and sign conventions, is in `results/ana
 - **Single-signal gates:** accept a flip iff the signal is **low**: conf1, blur reliance, blank reliance, or shift towards the claim.
   - For shift, this is the opposite of the original SPEC rule. We flipped it because the dev signal table, seen before the plan was written, showed that large shifts go with bad revisions. This is disclosed in the plan.
 - **Learned gates (for H2):** logistic regression on flips, with target "revision is good".
-  - **A** = [conf1, shift]
+  - **A** = [conf1, shift, pushback type]. Pushback type was added in plan Amendment A1, after the first dev analysis.
   - **B** = A + [blur reliance, blank reliance]
 - **Out-of-fold evaluation:** 5-fold cross-validation **grouped by image** within dev. Thresholds and learned gates are fit on 4 folds and scored on the 5th; all headline numbers are out-of-fold (OOF). In-sample curves are labelled exploratory.
 - **Reference points:** a **random gate**, plotted as a band over 100 seeds, and an **oracle gate**. The oracle's ECR is capped at the flip rate when turn 1 was wrong: a gate can only choose between a1 and a2, so it cannot fix errors the model did not flip on.
@@ -176,15 +176,17 @@ Confidence still predicts *not* flipping within each answer, more strongly for "
   - Always-accept: −0.383 (Qwen) and −0.349 (LLaVA).
   - Oracle: +0.072 and +0.060.
 
-### 5.5 H2: does reliance add information beyond conf1 + shift? (`results/h2_dev.csv`)
-Paired, image-clustered bootstrap of B − A in OOF AUROC. The decision rule is in `analysis_plan.md` §5.
+### 5.5 H2: does reliance add information? (`results/h2_dev.csv`, `results/h2_dev_before_amendment_A.csv`)
+Paired, image-clustered bootstrap of B − A in out-of-fold AUROC (`analysis_plan.md` §5). Two dev analyses, both kept:
 
-| Model | A | B | B − A [95% CI] | Decision |
-|---|---|---|---|---|
-| Qwen2-VL-2B | 0.832 | 0.866 | **+0.034 [+0.010, +0.061]** | reliance adds information |
-| LLaVA-1.5-7B | 0.821 | 0.821 | +0.000 [−0.010, +0.011] | no clear effect |
+| Model | First dev analysis: A = conf1 + shift | After Amendment A1: A = conf1 + shift + pushback type |
+|---|---|---|
+| Qwen2-VL-2B | A 0.832, B 0.866, **B − A = +0.034 [+0.010, +0.061]**: reliance adds information | A 0.849, B 0.869, **B − A = +0.020 [+0.002, +0.040]**: reliance adds information |
+| LLaVA-1.5-7B | A 0.821, B 0.821, B − A = +0.000 [−0.010, +0.011]: no clear effect | A 0.823, B 0.822, B − A = −0.001 [−0.011, +0.008]: no clear effect |
 
-**H2 overall: mixed.** Reliance helps for Qwen and makes no difference for LLaVA. The raw area under the EIR–ECR curve gives the same verdicts: Qwen +0.010 [+0.003, +0.017], LLaVA +0.000 [−0.002, +0.002]. Caveat: the bootstrap holds the OOF predictions fixed and does not refit, so it understates the uncertainty that comes from fitting.
+- **H2 on dev is "mixed" under both definitions.** Adding pushback type to both gates shrinks Qwen's gain from reliance, but it stays above 0.
+- **The confirmatory H2 test is the frozen B vs A on test** (Amendment A4).
+- **Caveat:** the bootstrap holds the out-of-fold predictions fixed, so it understates the uncertainty from fitting.
 
 ### 5.6 Sensitivity to how often the user is right (`results/sensitivity_pi_dev.csv`, `figures/sensitivity_pi_dev.png`)
 Net accuracy change vs turn 1, OOF, with thresholds re-tuned for each π:
@@ -251,10 +253,38 @@ How to read it:
 - **The mitigations are drawn as hollow markers on `figures/eir_ecr_dev.png`.** They change the model's turn-2 answers, so they are *not* bounded by the base run's oracle ceiling; LLaVA re-look lies above it.
 - **Instruction-placement check:** without "Answer yes or no." in the pushback, the turn-2 yes/no mass collapses (Qwen mean 0.30, minimum 0.000; LLaVA mean 0.58, minimum 0.033). So the no-suffix turn-2 answers are mostly read from a small share of the probability, and their apparent changes are not trustworthy. LLaVA's turn-2 accuracy of 0.597, for example, is partly an artefact of reading answers the model didn't really give. This confirms the pilot decision to repeat the instruction. It also means **conclusions about flip behaviour depend on where the answer-format instruction is placed**, which is worth stating as a limitation.
 
-### 5.10 Pending
-- **Phase 7:** freeze (git tag `pre-final`) and the single test run with `run_final.py --final`, applying `results/frozen_gates.json` unchanged. `run_final.py` is not written yet.
-- **Phases 8–9:** failure-case gallery, final figures, README reproduction steps, the report.
-- **Not done:** Phase 6 mitigations on test (to be decided with the Phase 7 freeze), and a second blur strength (optional extra in SPEC).
+### 5.10 Phase 7: prepared, waiting for team review (nothing has touched the test split)
+**Headline choices** (`analysis_plan.md`, Amendment A, committed c043521 before any final-run code):
+- **Headline gates:** the confidence threshold gate; learned A (conf1 + shift + pushback type); learned B (A + blur and blank reliance). Blur, blank and shift single-signal gates are secondary.
+- **References on every table and plot:** always-accept, never-accept, a **matched random gate** (same acceptance rate among flips), and the oracle with its ceiling.
+- **Net accuracy:** reported at the **native π** of the split with the dev-tuned threshold, plus π = 0.1, 0.3, 0.5 with the thresholds frozen for those π. π = 0.5 is not a headline. Each gate is compared with never-accept and with the matched random gate (paired bootstrap).
+- **Prompt mitigations on test:** grounding and re-look run on test; no-suffix stays dev only.
+
+**Frozen gates:** `results/frozen_gates.json` (fit on all of dev at commit 90c5f8d; sha256 `71979e78…`). The test run applies them unchanged, with no refitting or re-tuning.
+
+**`scripts/run_final.py --final` guards** (tested in `tests/test_release.py`):
+1. HEAD must carry the git tag `pre-final`, and the work tree must be clean. Only the run's own new outputs are tolerated, so a resume works.
+2. Frozen gates are applied without refitting. Their sha256 goes into every output header.
+3. An existing test file is never overwritten. `--resume` is accepted only if every header line matches: commit, tag, frozen-gate hash, partition, condition and stage.
+4. The `splits.json` actually read must be byte-identical to the committed one.
+5. Only after all of this is the test partition unlocked, for that process only.
+
+`scripts/analyse_final.py --partition test` also refuses without `--final` and a passing release check.
+
+**Dev dry run** (`results/final_dryrun_dev/`, `figures/final_dryrun_dev/`):
+- **What ran:** `run_final.py --dry-run-dev` on the real dev files. Every step found its file complete, so no GPU was needed, and the full analysis ran.
+- **Labelling:** every row and figure says "DRY RUN on dev … in-sample, NOT a result", because the frozen gates were fit on dev.
+- **What it confirms:** all seven tables and both figures are produced, including the matched-random and never-accept comparisons. The numbers agree with §5.4–5.9.
+- **CPU end-to-end test:** with the mock model and 4 questions, the dry run also passes, a repeat run is refused (never overwrite), and `--resume` finds nothing left to do.
+
+**Plan for the run** (after the team approves and the tag is created):
+- **Set-up:** a fresh clone of the tagged commit on TC1, then `sbatch slurm/job_final.sh`.
+- **Duration:** about 3 h on one V100 for both models (scaled from the dev runs), inside the 5.5 h job limit; resumable with `RESUME=1`.
+- **Output:** `results/*_test_*.jsonl`, `results/final_test/`, `figures/final_test/`.
+
+### 5.11 Still to do after Phase 7
+- Failure-case gallery, final figures, README reproduction steps, the report.
+- Optional, not planned: a second blur strength.
 
 ---
 
@@ -275,7 +305,7 @@ These are the papers listed in the project brief. What we say about each must be
 
 ## 8. What happens next
 1. **Phase 6 (dev): done** (§5.9).
-2. **Phase 7:** freeze everything (git tag `pre-final`), then run the test split **once** with `run_final.py --final`, applying `results/frozen_gates.json` unchanged.
+2. **Phase 7: prepared** (§5.10). After team review: create the git tag `pre-final`, then run the test split **once** with `run_final.py --final` on TC1.
 3. **Phases 8–9:** figures, failure-case gallery, README reproduction steps, report (10 pages, A4, Arial 10pt) including the AI Use Statement (`AI_USE_LOG.md`).
 
 ## 9. Ground rules we follow
