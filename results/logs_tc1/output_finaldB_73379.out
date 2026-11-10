@@ -1,0 +1,24 @@
+job=73379 part=B mode=dev node=TC1N02 date=Wed Nov 11 02:40:14 AM +08 2026
+head=6162e483cc8103e048a4195edec3aee62f35e5dd tags=
+DATA_DIR=/tc1home/UG/manasi004/project/data  (pope: 3 files, images: 500)
+name, memory.total [MiB], driver_version
+Tesla V100-PCIE-32GB, 32768 MiB, 580.173.02
+...................................................ss.................   [100%]
+68 passed, 2 skipped in 4.72s
+run_final: partition=dev out=/tc1home/UG/manasi004/devtest_rehearsal commit=6162e483cc8103e048a4195edec3aee62f35e5dd
+[qwen2vl_2b] grounding: 30 of 30 questions to run -> /tc1home/UG/manasi004/devtest_rehearsal/grounding_dev_qwen2vl_2b.jsonl
+[qwen2vl_2b] relook: 30 of 30 questions to run -> /tc1home/UG/manasi004/devtest_rehearsal/relook_dev_qwen2vl_2b.jsonl
+[llava15_7b_fp16] grounding: 30 of 30 questions to run -> /tc1home/UG/manasi004/devtest_rehearsal/grounding_dev_llava15_7b_fp16.jsonl
+[llava15_7b_fp16] relook: 30 of 30 questions to run -> /tc1home/UG/manasi004/devtest_rehearsal/relook_dev_llava15_7b_fp16.jsonl
+analysed qwen2vl_2b: 360 rows
+analysed llava15_7b_fp16: 360 rows
+wrote /tc1home/UG/manasi004/devtest_rehearsal/final_dryrun_dev/gates.csv (48 rows)
+wrote /tc1home/UG/manasi004/devtest_rehearsal/final_dryrun_dev/references.csv (24 rows)
+wrote /tc1home/UG/manasi004/devtest_rehearsal/final_dryrun_dev/auroc.csv (12 rows)
+wrote /tc1home/UG/manasi004/devtest_rehearsal/final_dryrun_dev/h2.csv (4 rows)
+wrote /tc1home/UG/manasi004/devtest_rehearsal/final_dryrun_dev/h3.csv (30 rows)
+wrote /tc1home/UG/manasi004/devtest_rehearsal/final_dryrun_dev/mitigations.csv (4 rows)
+wrote /tc1home/UG/manasi004/devtest_rehearsal/final_dryrun_dev/by_a1.csv (28 rows)
+wrote figures to /tc1home/UG/manasi004/devtest_rehearsal/figures
+H2 overall: not supported
+done Wed Nov 11 02:45:02 AM +08 2026

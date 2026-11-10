@@ -81,13 +81,20 @@ TC1 is reachable only from the NTU network (on campus or via the NTU VPN). Read 
 
 ## Phase 7: the one test run (TC1)
 
-Only after the team has reviewed `results/analysis_plan.md` (including Amendment A) and the dev dry run.
-1. On the laptop: `git tag pre-final && git bundle create sc4001.bundle --all && scp sc4001.bundle tc1:~/`
-2. On TC1: `git clone ~/sc4001.bundle ~/final && cd ~/final && git checkout pre-final && sbatch slurm/job_final.sh`
-3. After a timeout: `sbatch --export=ALL,RESUME=1 slurm/job_final.sh` (resumes only if every header matches).
+Only after the team has reviewed `results/analysis_plan.md` (including Amendment A) and the dry runs.
+1. On the laptop: `git tag pre-final && git push origin main pre-final && git bundle create sc4001.bundle main pre-final && scp sc4001.bundle tc1:~/`
+2. On TC1, a fresh clone of the tagged commit (TC1 has no GitHub credentials, so we use the bundle):
+   ```bash
+   git clone -b main ~/sc4001.bundle ~/final && cd ~/final && git checkout pre-final
+   bash slurm/submit_final.sh        # job A: base + signals; job B (waits for A): grounding, re-look, analysis
+   ```
+   **Where the data comes from:** a fresh clone contains only `data/splits.json`. The POPE files and the 500 COCO images stay in `~/project/data` (downloaded earlier by `scripts/download_data.py`). The job sets `DATA_DIR=$HOME/project/data`, and `run_final.py --final` refuses to start unless that folder's `splits.json` is byte-identical to the committed one.
+3. After a timeout, resubmit only the unfinished part, e.g. `sbatch --export=ALL,PART=A,RESUME=1 slurm/job_final.sh`. It resumes only if every header matches.
 4. Copy back `results/*_test_*.jsonl`, `results/final_test/` and `figures/final_test/`, and commit them. Never re-run to change numbers.
 
-The dry run of the same code on dev (no tag needed): `python scripts/run_final.py --dry-run-dev --resume`.
+**Rehearsals (no tag needed, never read the test split):**
+- On a laptop, CPU only: `python scripts/run_final.py --dry-run-dev --resume` reuses the dev files.
+- On TC1, GPU, with the same two jobs and the real models on 30 dev questions: `MODE=dev OUT_DIR=$HOME/devtest bash slurm/submit_final.sh`.
 
 ## Running on Kaggle (fallback)
 

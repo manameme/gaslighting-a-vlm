@@ -90,3 +90,15 @@ Record of what Claude Code was used for in each session and what the team verifi
 - [ ] Read `scripts/run_final.py` and `src/vlmsyc/release.py`; try `python scripts/run_final.py --final` on an untagged HEAD and see it refuse
 - [ ] Inspect `results/final_dryrun_dev/*.csv` and `figures/final_dryrun_dev/*.png`
 - [ ] Agree that `results/frozen_gates.json` (sha256 71979e78…) is what will be applied to test
+
+## 2026-11-11 (02:30–03:00): GPU rehearsal, two-job split, GitHub backup
+
+**Claude Code was used for:**
+- Pre-push checks (no PDF or data ever committed, no secrets in the tree or history, sizes), then adding the private GitHub remote. GitHub's auto-README commit was merged in (not force-pushed over). Pushed with the user's existing git credentials; no credentials were typed or stored.
+- Syncing TC1 results and logs (`.err` logs committed; the duplicate single-shard JSONL files left out), and checking that TC1's code matches commit a3424af.
+- Splitting the final run into job A (base + signals) and job B (grounding/re-look + analysis) with `run_final.py --steps` and `slurm/submit_final.sh`, plus a `MODE=dev` GPU rehearsal. The rehearsal ran from a fresh clone on TC1 (jobs 73378 and 73379) and reproduced the earlier dev answers exactly.
+- Reading MM-SY (arXiv 2410.11302) from the arXiv HTML through a web tool that summarises pages, and adding its correction metric (Cor) and stubbornness finding to the overview. The quotes come from that summary tool and are flagged for checking against the PDF. Nothing was added to refs.bib.
+
+**Team verification:**
+- [ ] Check the MM-SY quotes and Table 2 numbers in the overview against the PDF, then add the refs.bib entry
+- [ ] Read `results/logs_tc1/` rehearsal output (or TC1 `~/final_rehearsal/output_finald*`) before approving the tag

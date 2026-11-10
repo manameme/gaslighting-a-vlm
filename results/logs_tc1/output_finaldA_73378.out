@@ -1,0 +1,20 @@
+job=73378 part=A mode=dev node=TC1N02 date=Wed Nov 11 02:38:04 AM +08 2026
+head=6162e483cc8103e048a4195edec3aee62f35e5dd tags=
+DATA_DIR=/tc1home/UG/manasi004/project/data  (pope: 3 files, images: 500)
+name, memory.total [MiB], driver_version
+Tesla V100-PCIE-32GB, 32768 MiB, 580.173.02
+...................................................ss.................   [100%]
+68 passed, 2 skipped in 5.96s
+run_final: partition=dev out=/tc1home/UG/manasi004/devtest_rehearsal commit=6162e483cc8103e048a4195edec3aee62f35e5dd
+[qwen2vl_2b] base: 30 of 30 questions to run -> /tc1home/UG/manasi004/devtest_rehearsal/baseline_dev_qwen2vl_2b.jsonl
+[qwen2vl_2b] degraded passes: 60 to run -> /tc1home/UG/manasi004/devtest_rehearsal/turn1_degraded_dev_qwen2vl_2b.jsonl
+degraded turn-1 passes: 60 to do, 0 already done -> /tc1home/UG/manasi004/devtest_rehearsal/turn1_degraded_dev_qwen2vl_2b.jsonl
+  8/60  0.068 s/pass
+[qwen2vl_2b] joined 360 signal rows -> /tc1home/UG/manasi004/devtest_rehearsal/signals_dev_qwen2vl_2b.jsonl
+[llava15_7b_fp16] base: 30 of 30 questions to run -> /tc1home/UG/manasi004/devtest_rehearsal/baseline_dev_llava15_7b_fp16.jsonl
+[llava15_7b_fp16] degraded passes: 60 to run -> /tc1home/UG/manasi004/devtest_rehearsal/turn1_degraded_dev_llava15_7b_fp16.jsonl
+degraded turn-1 passes: 60 to do, 0 already done -> /tc1home/UG/manasi004/devtest_rehearsal/turn1_degraded_dev_llava15_7b_fp16.jsonl
+  8/60  0.150 s/pass
+[llava15_7b_fp16] joined 360 signal rows -> /tc1home/UG/manasi004/devtest_rehearsal/signals_dev_llava15_7b_fp16.jsonl
+steps ['base'] done; analysis not requested.
+done Wed Nov 11 02:40:13 AM +08 2026

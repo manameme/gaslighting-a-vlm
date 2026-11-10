@@ -277,9 +277,14 @@ How to read it:
 - **What it confirms:** all seven tables and both figures are produced, including the matched-random and never-accept comparisons. The numbers agree with §5.4–5.9.
 - **CPU end-to-end test:** with the mock model and 4 questions, the dry run also passes, a repeat run is refused (never overwrite), and `--resume` finds nothing left to do.
 
+**GPU rehearsal on TC1 (11 Nov, 02:38–02:45):** a fresh clone (from a git bundle) of commit `6162e48`, with a clean tree and `DATA_DIR=~/project/data`. Command: `MODE=dev bash slurm/submit_final.sh`, i.e. the two final-run jobs on the first 30 dev questions per model with the real models.
+- **Job A** (base + signals, 2 min 10 s) and **job B** (grounding, re-look, analysis; 4 min 49 s, started automatically after A) both completed with exit 0 and no errors. The clone was still clean afterwards.
+- **Reproducibility:** on those questions, every turn-1 and turn-2 answer is identical to the earlier dev runs (2,160 rows). Turn-2 probabilities agree to 4 decimal places; turn-1 differs by at most 0.0023 because of different batching.
+- **Not a result:** the analysis tables from 30 questions are meaningless as results and are labelled as a dry run.
+
 **Plan for the run** (after the team approves and the tag is created):
-- **Set-up:** a fresh clone of the tagged commit on TC1, then `sbatch slurm/job_final.sh`.
-- **Duration:** about 3 h on one V100 for both models (scaled from the dev runs), inside the 5.5 h job limit; resumable with `RESUME=1`.
+- **Set-up:** a fresh clone of the tagged commit on TC1, then `bash slurm/submit_final.sh`. This submits **job A** (base + signals, both models, about 1.3 h) and **job B** (grounding + re-look + analysis, about 2 h), which starts only after A succeeds.
+- **Duration:** both are scaled from the dev runs and inside the 5.5 h job limit; each is resumable with `RESUME=1`.
 - **Output:** `results/*_test_*.jsonl`, `results/final_test/`, `figures/final_test/`.
 
 ### 5.11 Still to do after Phase 7
@@ -290,7 +295,26 @@ How to read it:
 
 ## 6. Related work (to read and cite)
 These are the papers listed in the project brief. What we say about each must be checked against the paper itself before it goes in the report.
-- **MM-SY** (arXiv 2410.11302): sycophancy in VLMs. Our spec notes it reports LLaVA-1.5 flipping about 95% in a multiple-choice setup; our yes/no setting gives about 50%. To verify.
+- **MM-SY**: Li et al., "Have the VLMs Lost Confidence? A Study of Sycophancy in VLMs" (arXiv 2410.11302).
+
+  *Read on 11 Nov 2026 from the arXiv HTML version through a web tool that summarises pages. The quotes below were extracted by that tool. **A team member must check them against the PDF before they go in the report or refs.bib.***
+  - **Metrics (§3.3.1):**
+    - **Sycophancy (Syc):** the share of responses where the model shifts to an incorrect answer after the user's incorrect opinion (§3.1), averaged over 10 tasks and three tones.
+    - **Correction (Cor):** "the proportion of VLMs accepting user corrections when their initial answers are incorrect". The authors add that Cor "is hard to be an independent evaluation metric".
+    - **Acc@R1:** first-round accuracy.
+  - **Mapping to our metrics:** Cor is close to our flip rate when turn 1 was wrong, which is our ECR under always-accept. Syc is close to our flip rate when turn 1 was right, i.e. EIR under always-accept. MM-SY's setup differs (multiple-choice VQA, its own tones), so the numbers are not directly comparable.
+  - **Stubbornness finding:** the mitigations they test (prompting, SFT, DPO) lower sycophancy but make the model "more stubborn and less receptive to corrections". For LLaVA-1.5 (Table 2):
+
+    | Method | Syc | Cor |
+    |---|---|---|
+    | Baseline | 94.6 | 98.6 |
+    | + prompt | 86.8 | 88.2 |
+    | + SFT | 25.4 | 42.1 |
+    | + DPO | 5.4 | 1.7 |
+
+    DPO is described as "almost completely (1.7 Cor) rejecting user input".
+  - **Relevance to us:** this trade-off is exactly what the EIR–ECR plane shows. Our Qwen re-look result looks like it: EIR −0.110 but ECR −0.138 (§5.9). It also motivates a *gate* that can keep ECR while cutting EIR, rather than a model-wide shift towards refusing corrections.
+  - **Our own LLaVA numbers:** LLaVA-1.5's flip rate when it was right is 0.47 on our dev set, against their Syc of 94.6. The difference is plausibly due to the setup (yes/no logits with the answer format repeated, versus their protocol). This is not a contradiction, but say so carefully in the report.
 - **Zhao et al.** (arXiv 2408.11261): leading-query effects in VLMs.
 - **PENDULUM** (arXiv 2512.19350).
 - **Moral Sycophancy in VLMs** (arXiv 2602.08311): source of the EIR/ECR definitions.
