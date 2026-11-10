@@ -60,3 +60,10 @@ def test_mock_is_deterministic_and_prompt_dependent():
 
 def test_load_model_mock():
     assert isinstance(load_model({"name": "m", "hf_id": "mock"}), MockVLM)
+
+
+def test_images_for_processor_flat_and_nested():
+    from vlmsyc.models import images_for_processor
+    a, b, c = "A", "B", "C"
+    assert images_for_processor([a, [b, b], c], nested=False) == [a, b, b, c]
+    assert images_for_processor([a, [b, b]], nested=True) == [[a], [b, b]]

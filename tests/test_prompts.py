@@ -3,6 +3,8 @@ import pytest
 from vlmsyc.data import Question
 from vlmsyc.paths import load_yaml
 from vlmsyc.prompts import (
+    apply_condition,
+    n_images,
     Pushback,
     article,
     claim_text,
@@ -73,3 +75,25 @@ def test_turn_structure():
     )
     # The image is only attached in turn 1.
     assert sum(c["type"] == "image" for m in t2 for c in m["content"]) == 1
+
+
+def test_conditions():
+    base = apply_condition(CFG, "base")
+    pb = Pushback("neutral_doubt", 0, "Are you sure?")
+    assert turn2_messages(Q, "yes", pb, base) == turn2_messages(Q, "yes", pb, CFG)
+
+    g = apply_condition(CFG, "grounding")
+    t1 = turn1_messages(Q, g)
+    assert t1[0]["role"] == "system" and "Trust what is visible" in t1[0]["content"][0]["text"]
+    assert n_images(t1) == 1
+
+    r = apply_condition(CFG, "relook")
+    t2 = turn2_messages(Q, "yes", pb, r)
+    assert n_images(t2) == 2 and t2[-1]["content"][0] == {"type": "image"}
+    text = t2[-1]["content"][1]["text"]
+    assert text.startswith("Are you sure?") and text.endswith("Answer yes or no.") and "look at the image again" in text
+
+    ns = apply_condition(CFG, "nosuffix")
+    assert turn2_messages(Q, "yes", pb, ns)[-1]["content"][0]["text"] == "Are you sure?"
+    with pytest.raises(ValueError):
+        apply_condition(CFG, "nope")

@@ -22,7 +22,7 @@ from typing import Callable, Iterable
 
 from .data import Question, load_image
 from .models import VLM, YesNo
-from .prompts import Pushback, pushback_message, turn1_messages, turn2_messages
+from .prompts import Pushback, apply_condition, n_images, pushback_message, turn1_messages, turn2_messages
 
 KEY_FIELDS = ("uid", "model", "pushback_type", "paraphrase_id", "condition")
 
@@ -94,7 +94,7 @@ def read_metas(path: str | Path) -> list[dict]:
 
 # Settings that change the prompts or model but not the row keys. Resuming a
 # file with a different value would silently mix two experiments in one file.
-META_MUST_MATCH = ("pushback_suffix", "model_config")
+META_MUST_MATCH = ("pushback_suffix", "model_config", "condition", "system", "relook")
 
 
 def check_meta_consistent(path: str | Path, meta: dict) -> None:
@@ -185,10 +185,13 @@ def run_questions(
 
     # Turn 2: one prompt per (question, pushback), using that question's a1.
     pairs = [(q, pb) for q in questions for pb in pushbacks]
-    t2 = runner(
-        [turn2_messages(q, first[q.uid].answer, pb, prompt_cfg) for q, pb in pairs],
-        [images[q.uid] for q, _ in pairs],
-    )
+    t2_messages = [turn2_messages(q, first[q.uid].answer, pb, prompt_cfg) for q, pb in pairs]
+    # One copy of the image per image slot (two in the re-look condition).
+    t2_images = [
+        images[q.uid] if n_images(m) == 1 else [images[q.uid]] * n_images(m)
+        for (q, _), m in zip(pairs, t2_messages)
+    ]
+    t2 = runner(t2_messages, t2_images)
 
     rows = []
     for (q, pb), r2 in zip(pairs, t2):
@@ -233,7 +236,7 @@ def run_question(model: VLM, q: Question, pushback: Pushback, prompt_cfg: dict, 
     return run_questions(model, [q], [pushback], prompt_cfg, condition=condition, **kw)[0]
 
 
-def prepare_dev_run(experiment_path: str | Path, model_cfg: dict, stage: str) -> dict:
+def prepare_dev_run(experiment_path: str | Path, model_cfg: dict, stage: str, condition: str = "base") -> dict:
     """Everything a dev run needs, shared by pilot.py, run_baseline.py and the notebook.
 
     stage is 'pilot' or 'baseline' (a section of configs/experiment.yaml).
@@ -245,7 +248,7 @@ def prepare_dev_run(experiment_path: str | Path, model_cfg: dict, stage: str) ->
 
     exp = load_yaml(experiment_path)
     data_cfg = load_yaml(exp["data"])
-    prompt_cfg = load_yaml(exp["prompts"])
+    prompt_cfg = apply_condition(load_yaml(exp["prompts"]), condition)
     questions = load_questions(
         "dev",
         data_dir() / data_cfg["splits_file"],
@@ -265,7 +268,9 @@ def prepare_dev_run(experiment_path: str | Path, model_cfg: dict, stage: str) ->
         "meta": {
             "stage": stage, "git_commit": commit, "seed": exp["seed"], "versions": package_versions(),
             "pushback_suffix": prompt_cfg.get("pushback_suffix", ""), "model_config": model_cfg,
+            "condition": condition, "system": prompt_cfg.get("system"), "relook": prompt_cfg.get("relook"),
         },
+        "condition": condition,
     }
 
 

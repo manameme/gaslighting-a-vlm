@@ -84,6 +84,18 @@ def find_yes_no_token_ids(tokenizer) -> tuple[list[int], list[int]]:
     return yes_ids, no_ids
 
 
+def images_for_processor(images: list, nested: bool) -> list:
+    """Images in the layout the processor expects.
+
+    images[i] is the image of conversation i, or a list of images when the
+    conversation shows more than one (the re-look condition shows the image
+    again in turn 2). Most processors take one flat list in order of
+    appearance; some (SmolVLM) take one list per conversation.
+    """
+    per_conv = [im if isinstance(im, list) else [im] for im in images]
+    return per_conv if nested else [im for conv in per_conv for im in conv]
+
+
 class VLM:
     """Interface shared by the real model and the mock (SPEC section 3)."""
 
@@ -216,7 +228,7 @@ class HFVLM(VLM):
     def batch_yes_no(self, messages_list, images):
         torch = self.torch
         texts = [self.render_prompt(m) for m in messages_list]
-        imgs = [[im] for im in images] if self.cfg.get("nested_images") else list(images)
+        imgs = images_for_processor(images, nested=bool(self.cfg.get("nested_images")))
         inputs = self.processor(text=texts, images=imgs, return_tensors="pt", padding=True)
         # Move to GPU. Pixel values become fp16; ids and masks keep their int type.
         inputs = {
