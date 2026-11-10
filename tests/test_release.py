@@ -105,3 +105,17 @@ def test_dry_run_dev_with_mock_end_to_end(tmp_path):
     resumed = subprocess.run(cmd + ["--resume"], cwd=REPO_ROOT, capture_output=True, text=True)
     assert resumed.returncode == 0, resumed.stderr[-2000:]
     assert "0 of 4 questions to run" in resumed.stdout
+
+
+@pytest.mark.skipif(not (REPO_ROOT / "data" / "coco_val2014").exists(), reason="dev images not downloaded")
+def test_dry_run_split_into_two_jobs(tmp_path):
+    """Job A (base + signals) then job B (mitigations + analysis), as on TC1."""
+    common = [sys.executable, "scripts/run_final.py", "--dry-run-dev", "--mock", "--limit", "3",
+              "--out-dir", str(tmp_path), "--n-boot", "10", "--models", "qwen2vl_2b"]
+    a = subprocess.run(common + ["--steps", "base"], cwd=REPO_ROOT, capture_output=True, text=True)
+    assert a.returncode == 0, a.stderr[-2000:]
+    assert (tmp_path / "signals_dev_qwen2vl_2b.jsonl").exists()
+    assert not (tmp_path / "grounding_dev_qwen2vl_2b.jsonl").exists()
+    b = subprocess.run(common + ["--steps", "mitigations", "analysis"], cwd=REPO_ROOT, capture_output=True, text=True)
+    assert b.returncode == 0, b.stderr[-2000:]
+    assert (tmp_path / "relook_dev_qwen2vl_2b.jsonl").exists() and (tmp_path / "final_dryrun_dev" / "gates.csv").exists()

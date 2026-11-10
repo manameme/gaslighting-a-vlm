@@ -5,7 +5,9 @@
     python scripts/run_final.py --dry-run-dev                 # same steps on dev (no tag needed)
     python scripts/run_final.py --dry-run-dev --mock --limit 6 --out-dir /tmp/x   # CPU orchestration test
 
-Steps, per model (the model is loaded once, and only if a step has work left):
+Steps, per model (the model is loaded once per call, and only if a step has work left).
+--steps picks a subset; the final run uses two SLURM jobs: A = --steps base,
+B = --steps mitigations analysis (B waits for A).
   1. base condition, 900 test questions x 12 pushbacks  -> baseline_<p>_<model>.jsonl
   2. blurred / blank turn-1 passes                       -> turn1_degraded_<p>_<model>.jsonl
   3. grounding and re-look conditions                    -> grounding_<p>_<model>.jsonl, relook_<p>_<model>.jsonl
@@ -41,6 +43,11 @@ from vlmsyc.signals import DEGRADATIONS, signal_rows  # noqa: E402
 
 MODELS = ["qwen2vl_2b", "llava15_7b_fp16"]
 CONDITIONS = ["base", "grounding", "relook"]   # no-suffix stays dev-only (analysis_plan.md, Amendment A5)
+MITIGATION_CONDITIONS = ["grounding", "relook"]
+# The final run is split into two SLURM jobs (slurm/job_final.sh, PART=A then PART=B):
+#   A: --steps base                   (base + signals, both models)
+#   B: --steps mitigations analysis   (grounding + re-look, both models, then the analysis)
+ALL_STEPS = ["base", "mitigations", "analysis"]
 FROZEN = REPO_ROOT / "results" / "frozen_gates.json"
 EXPERIMENT = "configs/experiment.yaml"
 
@@ -50,8 +57,12 @@ def file_for(out_dir: Path, kind: str, partition: str, model: str) -> Path:
 
 
 def run_model(model_cfg: dict, partition: str, out_dir: Path, header: dict, resume: bool, limit: int | None,
-              strict_headers: bool) -> None:
-    """Steps 1-4 for one model. The model is loaded lazily, only if some step has work left."""
+              strict_headers: bool, steps: list[str]) -> None:
+    """The GPU steps for one model. The model is loaded lazily, only if some step has work left.
+
+    steps: 'base'        = step 1 (base condition) + step 2 (degraded passes) + step 4 (join)
+           'mitigations' = step 3 (grounding, re-look)
+    """
     name = model_cfg["name"]
     sig_cfg = load_yaml(EXPERIMENT)["signals"]
     model = None
@@ -72,7 +83,8 @@ def run_model(model_cfg: dict, partition: str, out_dir: Path, header: dict, resu
         return {**header, "partition": partition, "condition": condition, "stage": stage}
 
     base_setup = None
-    for cond in CONDITIONS:
+    conditions = (["base"] if "base" in steps else []) + (MITIGATION_CONDITIONS if "mitigations" in steps else [])
+    for cond in conditions:
         setup = prepare_run(EXPERIMENT, model_cfg, "baseline", cond, partition)
         if limit:
             setup["questions"] = setup["questions"][:limit]
@@ -101,6 +113,10 @@ def run_model(model_cfg: dict, partition: str, out_dir: Path, header: dict, resu
                                     batch_size=model_cfg["batch_size"], image_loader=setup["image_loader"],
                                     seed=setup["seed"], git_commit=header["git_commit"],
                                     meta={**setup["meta"], **header, "stage": "signals", "signals_cfg": sig_cfg})
+
+    if "base" not in steps:
+        del model
+        return
 
     # Step 4: join (CPU). Written once; an existing complete file is kept, never rewritten.
     spath = file_for(out_dir, "signals", partition, name)
@@ -135,7 +151,8 @@ def main() -> None:
     parser.add_argument("--mock", action="store_true", help="dry run only: use the CPU mock model")
     parser.add_argument("--limit", type=int, help="dry run only: first N questions")
     parser.add_argument("--out-dir", type=Path, help="dry run only (default RESULTS_DIR)")
-    parser.add_argument("--skip-analysis", action="store_true")
+    parser.add_argument("--steps", nargs="+", choices=ALL_STEPS, default=ALL_STEPS,
+                        help="which parts to run (job A: base; job B: mitigations analysis)")
     parser.add_argument("--n-boot", type=int, help="dry run only: fewer bootstrap resamples")
     args = parser.parse_args()
 
@@ -167,9 +184,13 @@ def main() -> None:
         cfg = load_yaml("configs/models/mock.yaml") if args.mock else load_yaml(f"configs/models/{name}.yaml")
         if args.mock:
             cfg = {**cfg, "name": name}  # mock model under the real name, so file names match
-        run_model(cfg, partition, out_dir, header, args.resume, args.limit if args.dry_run_dev else None, strict)
+        gpu_steps = [s for s in args.steps if s != "analysis"]
+        if gpu_steps:
+            run_model(cfg, partition, out_dir, header, args.resume, args.limit if args.dry_run_dev else None,
+                      strict, gpu_steps)
 
-    if args.skip_analysis:
+    if "analysis" not in args.steps:
+        print(f"steps {args.steps} done; analysis not requested.")
         return
     sys.path.insert(0, str(REPO_ROOT / "scripts"))
     import analyse_final
