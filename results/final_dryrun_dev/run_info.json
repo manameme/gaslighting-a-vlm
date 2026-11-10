@@ -5,5 +5,28 @@
   "frozen_gates_commit": "90c5f8d49c29b21c97d245498eea527ece45ebfc",
   "n_boot": 1000,
   "seed": 0,
-  "h2_overall": "mixed"
+  "h2_per_model": {
+    "qwen2vl_2b": {
+      "difference_B_minus_A": 0.02355778761646732,
+      "ci": [
+        0.006888439578849565,
+        0.04366219514501716
+      ],
+      "decision": "reliance adds information"
+    },
+    "llava15_7b_fp16": {
+      "difference_B_minus_A": 0.002971583544128631,
+      "ci": [
+        -0.004866789217926345,
+        0.009850083252910837
+      ],
+      "decision": "no clear effect (CI includes 0)"
+    }
+  },
+  "h2_overall": "mixed",
+  "h3_per_model": {
+    "qwen2vl_2b": "NOT supported",
+    "llava15_7b_fp16": "NOT supported"
+  },
+  "h3_overall": "not supported"
 }

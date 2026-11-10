@@ -260,6 +260,19 @@ How to read it:
 - **Net accuracy:** reported at the **native π** of the split with the dev-tuned threshold, plus π = 0.1, 0.3, 0.5 with the thresholds frozen for those π. π = 0.5 is not a headline. Each gate is compared with never-accept and with the matched random gate (paired bootstrap).
 - **Prompt mitigations on test:** grounding and re-look run on test; no-suffix stays dev only.
 
+**Combining the two models** (`analysis_plan.md`, Amendment B, commit 0e7d3ff). Per-model results are always reported next to the overall label.
+- **H2:**
+  - **supported:** B − A CI above 0 for both models;
+  - **mixed:** above 0 for one, includes 0 for the other;
+  - **reversal:** above 0 for one, entirely below 0 for the other (no pooled claim);
+  - **not supported:** otherwise.
+- **H3:**
+  - **supported:** both section-8 conditions hold for both models;
+  - **mixed:** they hold for one;
+  - **not supported:** otherwise.
+
+The dev dry run prints "H2 overall (Amendment B2): mixed" and "H3 overall (Amendment B1): not supported" (in-sample, not a result).
+
 **Frozen gates:** `results/frozen_gates.json` (fit on all of dev at commit 90c5f8d; sha256 `71979e78…`). The test run applies them unchanged, with no refitting or re-tuning.
 
 **`scripts/run_final.py --final` guards** (tested in `tests/test_release.py`):

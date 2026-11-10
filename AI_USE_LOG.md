@@ -102,3 +102,13 @@ Record of what Claude Code was used for in each session and what the team verifi
 **Team verification:**
 - [ ] Check the MM-SY quotes and Table 2 numbers in the overview against the PDF, then add the refs.bib entry
 - [ ] Read `results/logs_tc1/` rehearsal output (or TC1 `~/final_rehearsal/output_finald*`) before approving the tag
+
+## 2026-11-11: Amendment B
+
+**Claude Code was used for:**
+- Writing Amendment B, the team's rules for combining the two models for H2 (including "reversal") and H3, into `results/analysis_plan.md` (commit 0e7d3ff) before any code change.
+- Adding `ci_side`, `overall_h2` and `overall_h3` to `gates.py`, with a test covering every case, and using them in `analyse_final.py` (labels printed and saved in `run_info.json`) and `fit_gates_dev.py`. `fit_gates_dev.py` was deliberately not re-run, so `frozen_gates.json` keeps sha256 71979e78… (checked before and after).
+- Re-running the dev dry run: H2 overall "mixed", H3 overall "not supported" (in-sample, not a result).
+
+**Team verification:**
+- [ ] Read Amendment B and `tests/test_gates.py::test_amendment_b_combining_rules`
