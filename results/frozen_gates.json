@@ -1,6 +1,6 @@
 {
   "_note": "Fit on the dev split only (scripts/fit_gates_dev.py). Apply unchanged to test in run_final.py --final.",
-  "git_commit": "b2e089e9ff3538ec1af8f20baea5126de31ad9f9",
+  "git_commit": "90c5f8d49c29b21c97d245498eea527ece45ebfc",
   "seed": 0,
   "k_folds": 5,
   "n_boot": 1000,
@@ -70,28 +70,45 @@
           "type": "learned_logistic",
           "features": [
             "conf1",
-            "shift_to_claim"
+            "shift_to_claim",
+            "pushback_type"
+          ],
+          "columns": [
+            "conf1",
+            "shift_to_claim",
+            "pushback_type=assertive",
+            "pushback_type=authority",
+            "pushback_type=polite"
           ],
           "scaler_mean": [
             0.8743090017970595,
-            3.8677776537316255
+            3.8677776537316255,
+            0.3899736147757256,
+            0.24907651715039578,
+            0.28812664907651714
           ],
           "scaler_scale": [
             0.12708876559011406,
-            1.563918767932418
+            1.563918767932418,
+            0.48774398464204477,
+            0.4324782141965296,
+            0.4528903655063442
           ],
           "coef": [
-            -0.3844658225323111,
-            -1.0071809653875392
+            -0.1319089653513616,
+            -1.5363266939579339,
+            1.238219072409247,
+            0.825374345738296,
+            0.7742316845149755
           ],
-          "intercept": -2.427701799542825,
+          "intercept": -2.642739139041628,
           "score": "P(good revision) = sigmoid(intercept + sum(coef * (x - mean) / scale))",
           "rule": "accept a flip iff P(good revision) > threshold",
           "thresholds": {
-            "empirical_pi": 0.4543436637789707,
-            "pi_0.1": 0.7498868433150006,
-            "pi_0.3": 0.23105902177333346,
-            "pi_0.5": 0.08587168629323287
+            "empirical_pi": 0.5559142128851393,
+            "pi_0.1": 0.5771342318160171,
+            "pi_0.3": 0.2303373940231997,
+            "pi_0.5": 0.10479227396724758
           }
         },
         "learned_B_conf_shift_reliance": {
@@ -99,35 +116,54 @@
           "features": [
             "conf1",
             "shift_to_claim",
+            "pushback_type",
+            "reliance_blur",
+            "reliance_blank"
+          ],
+          "columns": [
+            "conf1",
+            "shift_to_claim",
+            "pushback_type=assertive",
+            "pushback_type=authority",
+            "pushback_type=polite",
             "reliance_blur",
             "reliance_blank"
           ],
           "scaler_mean": [
             0.8743090017970595,
             3.8677776537316255,
+            0.3899736147757256,
+            0.24907651715039578,
+            0.28812664907651714,
             0.36587620974901086,
             0.4029588058961526
           ],
           "scaler_scale": [
             0.12708876559011406,
             1.563918767932418,
+            0.48774398464204477,
+            0.4324782141965296,
+            0.4528903655063442,
             0.3113114790611345,
             0.1739780446878948
           ],
           "coef": [
-            0.18682986912060504,
-            -0.7331654410549362,
-            -0.5474393641436952,
-            -0.771509452712167
+            0.2779601664756305,
+            -1.0735191397031119,
+            0.7688992001601785,
+            0.5460329516872137,
+            0.4850203696926723,
+            -0.41986314083280796,
+            -0.7302776247195707
           ],
-          "intercept": -2.6679835701972294,
+          "intercept": -2.768433885821455,
           "score": "P(good revision) = sigmoid(intercept + sum(coef * (x - mean) / scale))",
           "rule": "accept a flip iff P(good revision) > threshold",
           "thresholds": {
-            "empirical_pi": 0.4737679849701932,
-            "pi_0.1": 0.6022561326837529,
-            "pi_0.3": 0.2396154593990948,
-            "pi_0.5": 0.11426406028044322
+            "empirical_pi": 0.5886083883052295,
+            "pi_0.1": 0.5934352531023801,
+            "pi_0.3": 0.23336219715730475,
+            "pi_0.5": 0.11717751339560467
           }
         }
       }
@@ -185,28 +221,45 @@
           "type": "learned_logistic",
           "features": [
             "conf1",
-            "shift_to_claim"
+            "shift_to_claim",
+            "pushback_type"
+          ],
+          "columns": [
+            "conf1",
+            "shift_to_claim",
+            "pushback_type=assertive",
+            "pushback_type=authority",
+            "pushback_type=polite"
           ],
           "scaler_mean": [
             0.857485735804823,
-            3.8008182499003724
+            3.8008182499003724,
+            0.30607407407407405,
+            0.25333333333333335,
+            0.23496296296296296
           ],
           "scaler_scale": [
             0.14022382689647944,
-            1.5771912323999475
+            1.5771912323999475,
+            0.4608608632263861,
+            0.434920171474676,
+            0.4239756702909157
           ],
           "coef": [
-            -0.26231971315299973,
-            -1.1402788980299376
+            -0.25017505245076777,
+            -1.1539577295408783,
+            -0.057759059346890435,
+            0.06320055578548331,
+            -0.17147104976280975
           ],
-          "intercept": -2.546324384615571,
+          "intercept": -2.5491346058354085,
           "score": "P(good revision) = sigmoid(intercept + sum(coef * (x - mean) / scale))",
           "rule": "accept a flip iff P(good revision) > threshold",
           "thresholds": {
-            "empirical_pi": 0.5991788693368989,
-            "pi_0.1": 0.5991788693368989,
-            "pi_0.3": 0.17618469835979902,
-            "pi_0.5": 0.09073940840805012
+            "empirical_pi": 0.5144498235953192,
+            "pi_0.1": 0.6461864567505125,
+            "pi_0.3": 0.168434188518245,
+            "pi_0.5": 0.08993425263489305
           }
         },
         "learned_B_conf_shift_reliance": {
@@ -214,35 +267,54 @@
           "features": [
             "conf1",
             "shift_to_claim",
+            "pushback_type",
+            "reliance_blur",
+            "reliance_blank"
+          ],
+          "columns": [
+            "conf1",
+            "shift_to_claim",
+            "pushback_type=assertive",
+            "pushback_type=authority",
+            "pushback_type=polite",
             "reliance_blur",
             "reliance_blank"
           ],
           "scaler_mean": [
             0.857485735804823,
             3.8008182499003724,
+            0.30607407407407405,
+            0.25333333333333335,
+            0.23496296296296296,
             0.41155938908922474,
             0.5618416296763933
           ],
           "scaler_scale": [
             0.14022382689647944,
             1.5771912323999475,
+            0.4608608632263861,
+            0.434920171474676,
+            0.4239756702909157,
             0.39448849443302275,
             0.4735616909443658
           ],
           "coef": [
-            -0.4092766511958109,
-            -0.8223380039021875,
-            0.28761106363080496,
-            -0.4782727193644231
+            -0.34097422735394217,
+            -0.9318221139820694,
+            0.017477771930673017,
+            0.13945754276776529,
+            -0.030176175411600545,
+            0.2948972313855263,
+            -0.4590184283597136
           ],
-          "intercept": -2.5482855602605614,
+          "intercept": -2.555084973296409,
           "score": "P(good revision) = sigmoid(intercept + sum(coef * (x - mean) / scale))",
           "rule": "accept a flip iff P(good revision) > threshold",
           "thresholds": {
-            "empirical_pi": 0.5577352235393656,
-            "pi_0.1": 0.6758147631177401,
-            "pi_0.3": 0.16724156046320232,
-            "pi_0.5": 0.11182444629673449
+            "empirical_pi": 0.5457066474991604,
+            "pi_0.1": 0.6744595779683275,
+            "pi_0.3": 0.17066136587993586,
+            "pi_0.5": 0.10620359020071449
           }
         }
       }
