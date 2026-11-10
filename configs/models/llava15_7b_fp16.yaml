@@ -1,0 +1,12 @@
+# LLaVA-1.5-7B (hf format), plain fp16 weights. Needs ~14 GB of GPU memory, so
+# it runs on TC1's V100 32 GB (not on a 16 GB T4: use llava15_7b_4bit there).
+# Chosen on 2026-11-10 for the main runs, to avoid 4-bit quantisation as a confound.
+# Same checkpoint and revision as llava15_7b_4bit.yaml.
+name: llava15_7b_fp16
+hf_id: llava-hf/llava-1.5-7b-hf
+revision: b234b804b114d9e37bb655e11cbbb5f5e971b7a9
+quant: none
+batch_size: 8
+max_image_side: 640    # the processor resizes to 336 anyway
+processor_kwargs: {}
+nested_images: false
