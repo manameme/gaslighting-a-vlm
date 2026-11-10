@@ -14,6 +14,7 @@ Step 2 (CPU): join with RESULTS_DIR/baseline_dev_<model>.jsonl (the merged
                                             from a bootstrap clustered by image
   Two AUROC targets:
     flip           over all rows: does the signal predict that the model caves?
+                   (not for shift_to_claim / abs_shift: circular, same turn-2 output)
     good_revision  only among revisions (a2 != a1): does it predict that the
                    revision is correct? (SPEC section 8)
 Dev split only. No thresholds are fitted here.
@@ -48,6 +49,10 @@ SIGNALS = {
     "abs_shift": lambda r: abs(r["shift"]),
 }
 SUBSETS = ("all", "random", "popular", "adversarial")
+# The shift comes from the same turn-2 output that defines a flip, so its AUROC
+# for predicting flips is circular and is not reported. It stays as a gate
+# input for good vs bad revisions (the gate sees turn 2 before deciding).
+CIRCULAR_FOR_FLIP = ("shift_to_claim", "abs_shift")
 
 
 def run_degraded(model, setup, model_cfg, sig_cfg, out_path, resume, batch_size):
@@ -91,6 +96,8 @@ def auroc_table(model_name: str, rows: list[dict], n_boot: int, seed: int) -> li
             y = np.array([bool(r[target]) for r in pool])
             clusters = np.array([r["image_id"] for r in pool])
             for name, fn in SIGNALS.items():
+                if target == "flip" and name in CIRCULAR_FOR_FLIP:
+                    continue
                 keep = [i for i, r in enumerate(pool) if fn(r) is not None]
                 s = np.array([fn(pool[i]) for i in keep], dtype=float)
                 yy, cc = y[keep], clusters[keep]
