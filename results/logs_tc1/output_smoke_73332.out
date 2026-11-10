@@ -1,0 +1,57 @@
+=== JOB ===
+job_id=73332
+node=TC1N07
+date=Tue Nov 10 09:39:21 PM +08 2026
+submit_dir=/tc1home/UG/manasi004/project
+conda_env=none
+=== NVIDIA-SMI ===
+Tue Nov 10 21:39:21 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.173.02             Driver Version: 580.173.02     CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  Tesla V100-PCIE-32GB           Off |   00000000:86:00.0 Off |                    0 |
+| N/A   32C    P0             34W /  250W |       0MiB /  32768MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+=== PYTHON ===
+python 3.11.14 /tc1home/UG/manasi004/venvs/vlmsyc/bin/python
+=== TORCH ===
+torch 2.6.0+cu124 | built for CUDA 12.4
+cudnn 90100
+torch.cuda.is_available() True
+gpu Tesla V100-PCIE-32GB
+gpu_memory_gb 31.7
+fp16_matmul_sum 512.0 (expected 512.0)
+=== TRANSFORMERS ===
+transformers 4.57.6
+vlm classes import OK
+=== OTHER PACKAGES (information only) ===
+accelerate 1.10.1
+PIL 13.0.0
+yaml 6.0.3
+pandas 3.1.1
+scipy MISSING: ModuleNotFoundError("No module named 'scipy'")
+sklearn MISSING: ModuleNotFoundError("No module named 'sklearn'")
+matplotlib MISSING: ModuleNotFoundError("No module named 'matplotlib'")
+pytest 9.2.0
+=== INTERNET FROM COMPUTE NODE ===
+huggingface yes HTTP 200
+github yes HTTP 200
+coco_images yes HTTP 200
+=== SUMMARY ===
+can_reach_huggingface=yes
+can_reach_github=yes
+can_reach_coco_images=yes
+required_checks=PASS
