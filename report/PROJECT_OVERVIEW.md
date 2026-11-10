@@ -246,8 +246,8 @@ How to read it:
   - Grounding slightly lowers errors introduced for both models (−0.044 Qwen, −0.010 LLaVA).
   - Re-look helps Qwen most (EIR −0.110, turn-2 accuracy +0.077), but it also halves Qwen's error corrections, so it mostly makes Qwen less movable. For LLaVA, re-look makes things *worse* (EIR +0.031, turn-2 accuracy −0.019).
 - **Gates do much better than prompts here.** Every mitigation still has EIR ≥ 0.40, against near 0 for the tuned gates in §5.4.
-  - At the dev error rate, the net accuracy change of accepting everything is between −0.37 and −0.27 under every prompt condition (`phase6_dev.csv`), against about 0 for the gates.
-  - At π = 0.5 the best mitigation reaches +0.024 (Qwen grounding). Gates reach +0.15 (Qwen) and +0.12 (LLaVA).
+  - At the dev error rate, the net accuracy change of accepting everything is between −0.38 and −0.27 under every prompt condition (`phase6_dev.csv`), against about 0 for the gates.
+  - At π = 0.5 the best grounding or re-look condition reaches +0.024 (Qwen grounding). Gates reach +0.15 (Qwen) and +0.12 (LLaVA). LLaVA no-suffix shows +0.094, but its turn-2 readings aren't trustworthy (see below).
 - **The mitigations are drawn as hollow markers on `figures/eir_ecr_dev.png`.** They change the model's turn-2 answers, so they are *not* bounded by the base run's oracle ceiling; LLaVA re-look lies above it.
 - **Instruction-placement check:** without "Answer yes or no." in the pushback, the turn-2 yes/no mass collapses (Qwen mean 0.30, minimum 0.000; LLaVA mean 0.58, minimum 0.033). So the no-suffix turn-2 answers are mostly read from a small share of the probability, and their apparent changes are not trustworthy. LLaVA's turn-2 accuracy of 0.597, for example, is partly an artefact of reading answers the model didn't really give. This confirms the pilot decision to repeat the instruction. It also means **conclusions about flip behaviour depend on where the answer-format instruction is placed**, which is worth stating as a limitation.
 
