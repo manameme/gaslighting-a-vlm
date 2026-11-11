@@ -196,3 +196,38 @@ Record-keeping only; no rule from sections 1–10 or Amendments A and B changes.
   **sha256 `71979e78b8cd69a6281e3c04ef0c3502b1b62ff20473196ffd2caab39ccebe86`**.
   `run_final.py --final` writes this hash into every test output header, and the run must be made from the commit tagged `pre-final`.
 - **Rule (team decision):** "If the analysis script fails after the model runs have finished, the script may be fixed and re-run on the saved test outputs. No model inference is re-run on test, no threshold, gate or decision rule changes, and the fix is disclosed in the report."
+
+---
+
+# Amendment C (2026-11-11): descriptive analyses of the saved test outputs, and the H1 rule
+
+**Disclosure:** these analyses were specified after the `pre-final` tag (commit 8269e4f) and while the test run was in progress, but **before any test output was read**. They are descriptive. They change no threshold, gate, decision rule for H2 or H3, or model run. They are computed by `scripts/describe_final.py` (branch `post-final-prep`), which reads only the saved test outputs, never overwrites, and refuses to run until the final analysis (job B) has written `results/final_test/run_info.json`. The script reuses the dev code unchanged: `metrics.flip_summary`; `run_signals.auroc_table`; and `fit_gates_dev.ci`, `ece` and `reliability_bins`. The by-answer and calibration loops mirror `fit_gates_dev.py` line for line. Run on dev, it must reproduce the existing dev tables exactly.
+
+## C1. Baseline flip summary (per model)
+Using `vlmsyc.metrics.flip_summary` on `baseline_<split>_<model>.jsonl`, computed overall, by pushback type, and by POPE split:
+- turn-1 accuracy (per question);
+- turn-2 accuracy;
+- flip rate overall, when a1 is right, and when a1 is wrong;
+- turn-2 yes/no mass.
+
+## C2. Signal AUROCs for predicting a flip
+- **Signals:** conf1, reliance_blur and reliance_blank, using the raw signal as in section 7. The AUROC of `shift_to_claim` for flips is **not** reported, because it is circular.
+- **Primary:** within a1 = yes and within a1 = no separately, with 95% image-clustered bootstrap CIs (1,000 resamples, seed 0).
+- **Pooled over both answers:** reported **only as labelled context**, because pooling mixes answer direction (the Simpson's-paradox issue found on dev).
+
+## C3. Turn-1 calibration per POPE split
+Per question, as in section 8:
+- turn-1 accuracy;
+- ECE (10 equal-count bins);
+- mean conf1 on wrong answers;
+- share of wrong answers with conf1 > 0.9;
+- reliability-diagram bins.
+
+Each has 95% image-clustered CIs.
+
+## C4. H1 rule: does turn-1 confidence predict flips?
+- **Per model:** using the C2 within-answer AUROCs of conf1 for predicting a flip (higher confidence → fewer flips means AUROC < 0.5):
+  - **"supported"**: the 95% CI lies entirely below 0.5 within **both** a1 = yes and a1 = no;
+  - **"mixed"**: it does so within exactly one;
+  - **"not supported"**: otherwise.
+- The same rule is applied to both models, and the verdict is reported **per model**. No pooled verdict across models is made.
