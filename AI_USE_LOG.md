@@ -131,3 +131,20 @@ Record of what Claude Code was used for in each session and what the team verifi
 - Bundling `main` and `pre-final`, cloning into a fresh `~/final` on TC1, and checking HEAD = tag, the clean tree, and that the `splits.json` and `frozen_gates.json` hashes match.
 - Submitting `bash slurm/submit_final.sh` at 2026-11-11 13:09:37 +08:00: job A 73424 (base + signals), job B 73425 (grounding, re-look, analysis; afterok on A).
 - No test outputs have been read. No code or config was changed after the tag; only this log and the overview were edited.
+
+## 2026-11-11 (during the test run): post-final preparation on branch `post-final-prep` (dev data only)
+
+**Claude Code was used for:**
+- `scripts/make_failure_gallery.py`, with its selection rule fixed in the docstring before any test output is read:
+  - a row is a universal failure if all 6 frozen gates (native-π threshold) and both prompt mitigations give a wrong final answer;
+  - the top 6 images per model are shown, ranked by count.
+
+  Run on dev: `results/failure_gallery_dev.csv`, `results/failure_counts_dev.csv`, `figures/failure_gallery_dev_*.png`.
+- `scripts/make_zip.sh`, which builds from committed files with `git archive`. It excludes `data/`, PDFs, weights, caches and logs, includes `results/` and `figures/`, and checks the exclusions. Test build: 121 files, 84.1 MB uncompressed.
+- The README reproduction section, with runtimes taken from SLURM `sacct`.
+- `report/test_number_checklist.md`: where every test number for the report comes from, plus three gaps the tagged analysis does not produce.
+- No test outputs were read, no tagged code or config was changed (new files only), and only job state was checked on TC1.
+
+**Team verification:**
+- [ ] Agree with the gallery selection rule before it is run on test
+- [ ] Decide whether to add the three descriptive test tables listed as gaps in `report/test_number_checklist.md`
