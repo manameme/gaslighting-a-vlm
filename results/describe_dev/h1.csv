@@ -1,0 +1,3 @@
+model,ci_below_0.5_within_a1_yes,ci_below_0.5_within_a1_no,h1_verdict
+qwen2vl_2b,True,True,supported
+llava15_7b_fp16,True,True,supported
