@@ -148,3 +148,11 @@ Record of what Claude Code was used for in each session and what the team verifi
 **Team verification:**
 - [ ] Agree with the gallery selection rule before it is run on test
 - [ ] Decide whether to add the three descriptive test tables listed as gaps in `report/test_number_checklist.md`
+
+## 2026-11-11 (during the test run): Amendment C and `describe_final.py` (branch `post-final-prep`, no test output read)
+
+**Claude Code was used for:**
+- Checking `data/splits.json`: it holds only the seed, the dev fraction, `n_images`, and image ids and question ids per partition, with no labels. Including it in the ZIP, and adding a guard so `make_zip.sh` fails if `src/`, `configs/` or `slurm/` differ from `pre-final` (tested: it refuses an older commit).
+- Writing Amendment C (commit c33404d), as specified by the team, including the disclosure that it was written after the tag but before any test output was read.
+- Writing `scripts/describe_final.py` (commit d898408). It reuses the dev functions unchanged and mirrors the dev loops. It refuses to run on test until `results/final_test/run_info.json` exists, and never overwrites. On dev it reproduces the existing tables exactly (by-answer 12/12, pooled 24/24, calibration 6/6, reliability 60/60 rows).
+- **Error found and reported:** commit 92c8c6a reintroduced 16 circular `shift_to_claim`/`abs_shift` flip rows into `results/signals_auroc_dev.csv`, because a later rsync from TC1 copied back an older file. They were never used in the overview. The fix is pending a team decision.
