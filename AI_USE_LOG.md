@@ -118,3 +118,16 @@ Record of what Claude Code was used for in each session and what the team verifi
 **Review record, as reported by the user (Manasi):** Manasi reviewed all the files and scripts. Claude Code recorded this statement as given; it did not take part in the review.
 
 **Claude Code was used for:** adding Note C to `results/analysis_plan.md` (the full sha256 of `frozen_gates.json` applied to test, and the team's rule for analysis-script failures), and re-running the pre-tag checks.
+
+## 2026-11-11 13:09: `pre-final` tag and final-run submission
+
+**Claude Code was used for:**
+- Re-checking the four preconditions from scratch, all passing:
+  1. Amendment B committed;
+  2. `frozen_gates.json` sha256 71979e78… identical to the plan's Note C;
+  3. clean tree, 71/71 tests pass, review record present;
+  4. only the already-reported commit 94e8994 touched src/scripts/slurm since the rehearsal.
+- Creating the annotated tag `pre-final` on commit 8269e4ff3f08a459246c94b27230733a5371189d and pushing `main` and the tag to the private GitHub remote with the user's existing credentials.
+- Bundling `main` and `pre-final`, cloning into a fresh `~/final` on TC1, and checking HEAD = tag, the clean tree, and that the `splits.json` and `frozen_gates.json` hashes match.
+- Submitting `bash slurm/submit_final.sh` at 2026-11-11 13:09:37 +08:00: job A 73424 (base + signals), job B 73425 (grounding, re-look, analysis; afterok on A).
+- No test outputs have been read. No code or config was changed after the tag; only this log and the overview were edited.

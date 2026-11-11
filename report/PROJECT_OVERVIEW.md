@@ -253,12 +253,22 @@ How to read it:
 - **The mitigations are drawn as hollow markers on `figures/eir_ecr_dev.png`.** They change the model's turn-2 answers, so they are *not* bounded by the base run's oracle ceiling; LLaVA re-look lies above it.
 - **Instruction-placement check:** without "Answer yes or no." in the pushback, the turn-2 yes/no mass collapses (Qwen mean 0.30, minimum 0.000; LLaVA mean 0.58, minimum 0.033). So the no-suffix turn-2 answers are mostly read from a small share of the probability, and their apparent changes are not trustworthy. LLaVA's turn-2 accuracy of 0.597, for example, is partly an artefact of reading answers the model didn't really give. This confirms the pilot decision to repeat the instruction. It also means **conclusions about flip behaviour depend on where the answer-format instruction is placed**, which is worth stating as a limitation.
 
-### 5.10 Phase 7: prepared, waiting for team review (nothing has touched the test split)
+### 5.10 Phase 7: tagged and submitted (test run in progress)
 **Headline choices** (`analysis_plan.md`, Amendment A, committed c043521 before any final-run code):
 - **Headline gates:** the confidence threshold gate; learned A (conf1 + shift + pushback type); learned B (A + blur and blank reliance). Blur, blank and shift single-signal gates are secondary.
 - **References on every table and plot:** always-accept, never-accept, a **matched random gate** (same acceptance rate among flips), and the oracle with its ceiling.
 - **Net accuracy:** reported at the **native π** of the split with the dev-tuned threshold, plus π = 0.1, 0.3, 0.5 with the thresholds frozen for those π. π = 0.5 is not a headline. Each gate is compared with never-accept and with the matched random gate (paired bootstrap).
 - **Prompt mitigations on test:** grounding and re-look run on test; no-suffix stays dev only.
+
+**Status (11 Nov 2026):** team review approved; the review record is in `AI_USE_LOG.md`.
+- **Tag:** `pre-final` (annotated tag object `e446fcb`) on commit **`8269e4ff3f08a459246c94b27230733a5371189d`**. Pushed to the private GitHub remote with `main`.
+- **Frozen gates:** sha256 `71979e78b8cd69a6281e3c04ef0c3502b1b62ff20473196ffd2caab39ccebe86`, recorded in `analysis_plan.md` (Note C).
+- **Run location:** a fresh clone from a git bundle (`main` + `pre-final`) at `~/final` on TC1. HEAD carries `pre-final`, the tree was clean, and `DATA_DIR` (`~/project/data`) has the committed `splits.json` (sha256 `e3b050d2…`).
+- **Submitted 2026-11-11 13:09:37 +08:00** with `bash slurm/submit_final.sh`:
+  - **job A = 73424** (base + signals, both models), started on TC1N02;
+  - **job B = 73425** (grounding, re-look, analysis), waiting on A.
+- **Rules from here:** no reruns and no changed settings. A failed job is reported and waits for a team decision. Analysis-script failures follow Note C.
+- **Test results:** not read yet.
 
 **Combining the two models** (`analysis_plan.md`, Amendment B, commit 0e7d3ff). Per-model results are always reported next to the overall label.
 - **H2:**
