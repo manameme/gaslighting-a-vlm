@@ -156,3 +156,22 @@ Record of what Claude Code was used for in each session and what the team verifi
 - Writing Amendment C (commit c33404d), as specified by the team, including the disclosure that it was written after the tag but before any test output was read.
 - Writing `scripts/describe_final.py` (commit d898408). It reuses the dev functions unchanged and mirrors the dev loops. It refuses to run on test until `results/final_test/run_info.json` exists, and never overwrites. On dev it reproduces the existing tables exactly (by-answer 12/12, pooled 24/24, calibration 6/6, reliability 60/60 rows).
 - **Error found and reported:** commit 92c8c6a reintroduced 16 circular `shift_to_claim`/`abs_shift` flip rows into `results/signals_auroc_dev.csv`, because a later rsync from TC1 copied back an older file. They were never used in the overview. The fix is pending a team decision.
+
+## 2026-11-11: Fix of the stale `results/signals_auroc_dev.csv` (branch `post-final-prep`, dev only)
+
+**Mistake (Claude Code's):** in commit 92c8c6a (Phase 6 results), an `rsync` of `results/` from TC1 replaced the local `signals_auroc_dev.csv` with TC1's older copy. That copy still had the 16 circular rows (`shift_to_claim`/`abs_shift` predicting flips), which had been removed in 057c2ef. It was committed without noticing, and found by the dev-equality check of `describe_final.py`.
+
+**Fix (team-chosen option (a), adjusted):**
+1. Ran `run_signals.py --join-only` for both models (dev).
+2. Restored `results/signals_dev_*.jsonl` from git, so their headers keep the original commit, seed and versions; `git diff` on them is empty.
+   - The regenerated rows differed from the committed ones in 2 of 7,200 rows per model, in `shift`/`shift_to_claim` only, by at most 4.4e-16 (Linux on TC1 vs macOS floating-point rounding).
+   - The CSV was therefore rebuilt from the **restored committed rows** with the unchanged `run_signals.auroc_table` and `write_auroc_csv`. The result is byte-for-byte the same as the `--join-only` output.
+3. **Checks:** the new CSV has 0 circular flip rows (16 before). All 64 remaining rows are identical, in every column, to the corresponding old rows, including the 24 conf1/blur/blank flip rows. `frozen_gates.json` sha256 is still 71979e78b8cd69a6281e3c04ef0c3502b1b62ff20473196ffd2caab39ccebe86.
+
+**Audit of every file in 92c8c6a:**
+- The six `{grounding,relook,nosuffix}_dev_*.jsonl` files, both `signals_dev_*.jsonl` files and `logs_tc1/output_phase6_73360.out` are sha256-identical to TC1's `~/project` copies.
+- `phase6_dev.csv`, at 92c8c6a and at HEAD, is identical to a fresh `score_phase6_dev.py` run.
+- The three dev figures at HEAD are identical to a fresh `make_figures.py` run.
+- `AI_USE_LOG.md`, `PROJECT_OVERVIEW.md` and `make_figures.py` were hand edits in that commit.
+- **The `signals_dev_*.jsonl` files at 92c8c6a are TC1's original GPU-job outputs** (header commit fb22212). They replaced a locally re-joined copy whose rows differed only in that floating-point rounding. The frozen gates were fit later, on these committed files. Not stale; recorded for completeness.
+- **No other stale file was found.**
