@@ -115,4 +115,46 @@ On Colab the same notebook mounts Drive and writes results there directly.
 
 ## Reproducing the results
 
-TODO (Phases 4 to 9). Include exact commands and runtimes measured in the pilot.
+All runtimes below were measured with SLURM accounting (`sacct`) on TC1 (one Tesla V100-PCIE-32GB) or on a laptop CPU. The model weights download on the first run of each model, which is included in the pilot times.
+
+### 1. Dependencies
+- **GPU (TC1):** Python 3.11 in a **uv venv**, not conda; conda breaks on TC1's network home directory. Set it up once on the head node (installing only):
+  ```bash
+  module load python/3.11 uv
+  export UV_CACHE_DIR=/tmp/$USER-uvcache UV_LINK_MODE=copy
+  uv venv --python "$(which python3.11)" ~/venvs/vlmsyc && source ~/venvs/vlmsyc/bin/activate
+  uv pip install -r requirements-gpu.txt --index-strategy unsafe-best-match \
+      --extra-index-url https://download.pytorch.org/whl/cu124
+  ```
+  `requirements-gpu.txt` pins every version: torch 2.6.0+cu124, transformers 4.57.6, accelerate 1.10.1, bitsandbytes 0.49.2, numpy 2.4.6, scikit-learn 1.9.1, matplotlib 3.11.2, and the rest. Each result file's `_meta` header also records the versions used.
+- **CPU (laptop; tests, gate analysis, figures):** `python3 -m venv .venv && ./.venv/bin/pip install numpy pyyaml pillow pytest scikit-learn matplotlib`, then `./.venv/bin/python -m pytest -q`. That runs 71 tests in about 5 s, with no GPU and no model weights (a mock model is used).
+
+### 2. Data preparation
+```bash
+python scripts/download_data.py   # POPE json (pinned commit) + the 500 COCO val2014 images it uses (~80 MB)
+python scripts/build_splits.py    # rebuilds data/splits.json; a test checks it equals the committed file
+```
+The split is by image: 200 dev images (600 questions) and 300 test images (900 questions), seed 0. If `data/` is somewhere else, set `DATA_DIR`.
+
+### 3. Commands per phase (run from the repo root; GPU steps through SLURM on TC1)
+| Phase | Command | What it produces | Measured runtime |
+|---|---|---|---|
+| 0 GPU check | `sbatch slurm/job_smoke.sh` | log only | 1 min 17 s |
+| 3 Pilot | `sbatch slurm/job_pilot.sh` (both models, ± suffix) | `results/pilot.csv`, `results/pilot_dev_*.jsonl` | 9 min 29 s, incl. weight download; LLaVA fp16 alone 4 min 2 s |
+| 4–5 Dev baseline + signals | `sbatch slurm/job_dev.sh` | `results/baseline_dev_*.jsonl`, `turn1_degraded_dev_*`, `signals_dev_*`, `signals_auroc_dev.csv` | 35 min 16 s (both models) |
+| 5 Gates on dev (CPU) | `python scripts/fit_gates_dev.py` then `python scripts/make_figures.py` | `results/gates_dev.csv`, `h2_dev.csv`, `h3_*_dev.csv`, `sensitivity_pi_dev.csv`, `signals_by_a1_dev.csv`, **`frozen_gates.json`**, `figures/*_dev.png` | about 40 s on a laptop CPU |
+| 6 Prompt mitigations on dev | `sbatch slurm/job_phase6.sh`, then `python scripts/score_phase6_dev.py` (CPU) | `results/{grounding,relook,nosuffix}_dev_*.jsonl`, `phase6_dev.csv` | 1 h 57 min 29 s (both models, 3 conditions) |
+| 7 Dry runs (no test data) | CPU: `python scripts/run_final.py --dry-run-dev --resume`; GPU: `MODE=dev bash slurm/submit_final.sh` | `results/final_dryrun_dev/`, `figures/final_dryrun_dev/` | CPU about 35 s; GPU on 30 questions/model: 2 min 10 s + 4 min 49 s |
+| 7 **Test run (once)** | `bash slurm/submit_final.sh` from a fresh clone at tag `pre-final` (see "Phase 7" above) | `results/*_test_*.jsonl`, `results/final_test/`, `figures/final_test/` | job A and job B: to be filled in from `sacct` after the run |
+| 8 Failure gallery | `python scripts/make_failure_gallery.py --partition dev` (or `test`) | `results/failure_gallery_*.csv`, `failure_counts_*.csv`, `figures/failure_gallery_*` | a few seconds |
+| 9 Submission ZIP | `bash scripts/make_zip.sh` | `dist/sc4001_code_<commit>.zip` (tracked files only; no data, PDFs, weights, caches or logs) | a few seconds |
+
+### 4. The test split runs once
+- **Lock:** `src/vlmsyc/splits.py` refuses to load the test split unless `ALLOW_TEST=1`. Only `scripts/run_final.py --final` sets it, and only after its guards pass:
+  - HEAD carries the tag `pre-final` and the tree is clean;
+  - the frozen gates are applied as saved, never refit;
+  - an existing output is never overwritten;
+  - `--resume` requires every header line to match.
+- **Tested:** a unit test scans every other script and module to make sure none can unlock the test split.
+- **Decided on dev only:** all thresholds, gates and decision rules were fixed on dev before the tag (`results/analysis_plan.md`, Amendments A and B, Note C).
+- **Analysis failures:** if the analysis script fails after the model runs, Note C allows fixing and re-running it on the saved outputs. No model inference is re-run and no rule changes; the fix is disclosed.
