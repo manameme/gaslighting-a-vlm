@@ -185,3 +185,14 @@ Uses the per-model CI of the paired B − A difference in AUROC (A4).
 - **"not supported"**: otherwise. That covers both CIs including 0, one including 0 with the other below 0, and both below 0.
 
 Per-model results are always reported next to the overall label.
+
+---
+
+# Note C (2026-11-11): the frozen gates applied to test, and a rule for analysis-script failures
+
+Record-keeping only; no rule from sections 1–10 or Amendments A and B changes.
+
+- **File applied to the test split:** `results/frozen_gates.json`, last changed in commit `1f99431`, with
+  **sha256 `71979e78b8cd69a6281e3c04ef0c3502b1b62ff20473196ffd2caab39ccebe86`**.
+  `run_final.py --final` writes this hash into every test output header, and the run must be made from the commit tagged `pre-final`.
+- **Rule (team decision):** "If the analysis script fails after the model runs have finished, the script may be fixed and re-run on the saved test outputs. No model inference is re-run on test, no threshold, gate or decision rule changes, and the fix is disclosed in the report."

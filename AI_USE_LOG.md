@@ -112,3 +112,9 @@ Record of what Claude Code was used for in each session and what the team verifi
 
 **Team verification:**
 - [ ] Read Amendment B and `tests/test_gates.py::test_amendment_b_combining_rules`
+
+## 2026-11-11: Team review before the `pre-final` tag
+
+**Review record, as reported by the user (Manasi):** Manasi reviewed all the files and scripts. Claude Code recorded this statement as given; it did not take part in the review.
+
+**Claude Code was used for:** adding Note C to `results/analysis_plan.md` (the full sha256 of `frozen_gates.json` applied to test, and the team's rule for analysis-script failures), and re-running the pre-tag checks.
