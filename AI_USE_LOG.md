@@ -225,3 +225,10 @@ Record of what Claude Code was used for in each session and what the team verifi
   1. `make_failure_gallery.py --a4-figures-only` redraws the pre-registered selection as 16 cm figures (2 × 3, text ≥ 6.5 pt) under new file names. It checks that the selection equals the committed CSV; the selection rule and CSV are unchanged.
   2. `make_failure_gallery_b.py`: a second view chosen by the team after seeing the test results (assertive pushback, learned gate B at its frozen native-π threshold: three missed corrections and three blocked harmful flips, lowest question ids). Its rule was committed in the docstring (e0a7c08) before the first run. After that run the figure headers overlapped, so the first run's uncommitted outputs were removed and redrawn with the same rule; the CSV is byte-identical. In group (b) all three examples come from one image (COCO 310196), as three different questions; this follows from the rule.
 - **`requirements-cpu.txt`** (six pinned packages, as used in the fresh-clone check) and the README CPU steps.
+
+## 2026-11-12: `post-final-prep` merged into `main`; README runtimes; ZIP
+
+**Claude Code was used for:**
+- Fast-forwarding `main` to `post-final-prep` (64ff20d). Checked that `git diff --stat pre-final..HEAD -- src configs slurm` is empty.
+- Filling in the README test-run runtimes from `sacct`: job 73424 took 59:00 and job 73425 took 2:04:46, both COMPLETED with exit 0.
+- Rebuilding the submission ZIP with `scripts/make_zip.sh` and checking its contents (no PDF; from `data/`, only `splits.json`).
