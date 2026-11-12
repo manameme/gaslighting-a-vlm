@@ -199,3 +199,16 @@ Record of what Claude Code was used for in each session and what the team verifi
 **Team verification:**
 - [ ] Check the labels in `results/final_test/run_info.json` and `results/describe_test/h1.csv` against the rules in `analysis_plan.md`
 - [ ] Look at `figures/final_test/*.png` and `figures/failure_gallery_test_*.png`
+
+## 2026-11-12: Number checks, LLaVA blank-reliance check, report figures, fresh-clone reproduction (branch `post-final-prep`)
+
+**Claude Code was used for:**
+- **Item 1 (partial):** tracing the specific numbers named by the user to file, row and column. The full report text was not received, so the audit of every number is pending.
+- **Item 2:** a read-only check of LLaVA's p(a1 | blank image) on the saved test signals. It is almost constant: p(yes | blank) ranges 0.010–0.056, SD 0.0056. As a result, reliance_blank ≈ conf1 minus a constant (correlation 0.999), which explains the equal AUROCs. Not a bug.
+- **Item 3:** copying 4 test figures to `report/figures/`. The pixels are unchanged; only the DPI tag was set, so each is 16 cm wide.
+- **Item 4:** printing the failure-gallery rows.
+- **Item 5:** a fresh clone from GitHub, with the pinned CPU packages from `requirements-gpu.txt`; 71/71 tests pass (with data linked).
+  - The final analysis, run from the clone at the `pre-final` tag on the saved test outputs, plus `describe_final.py` and `make_failure_gallery.py` on `post-final-prep`, all regenerated into a temporary folder.
+  - All 7 final tables, `run_info.json`, the 6 descriptive tables, the 2 gallery CSVs and the 2 gallery PNGs are byte-identical to the committed ones.
+  - The two `figures/final_test` PNGs differ only in rendering: TC1 has no Arial, so its figures use matplotlib's default font.
+- No code, config, threshold or rule was changed and no model inference was run. Item 6 (merge to `main`, ZIP, README runtimes) is on hold until the full number audit is done.
