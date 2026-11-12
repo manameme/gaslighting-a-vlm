@@ -183,3 +183,19 @@ Record of what Claude Code was used for in each session and what the team verifi
 - Running integrity checks that print counts and headers only, no result values: full row counts, no duplicates, the 900 test questions with no dev overlap, headers = tag commit + frozen-gates hash, and the FINAL status on every table.
 - Committing them on `main`. No code was changed; `git diff pre-final..HEAD -- src configs slurm scripts` is empty on `main`.
 - No result has been read or interpreted yet.
+
+## 2026-11-12: Post-run descriptive analyses on the saved test outputs (branch `post-final-prep`)
+
+**Claude Code was used for:**
+- Merging `main` (final test outputs) into `post-final-prep`. The only conflict was in this log; both sides were kept. Checked that `git diff pre-final..HEAD -- src configs slurm` is empty.
+- Running, on the saved test outputs only (no model inference, no code/config/threshold/rule change, nothing overwritten):
+  - `scripts/describe_final.py --partition test` (Amendment C) → `results/describe_test/`;
+  - `scripts/make_failure_gallery.py --partition test` → `results/failure_gallery_test.csv`, `results/failure_counts_test.csv`, `figures/failure_gallery_test_*.png`.
+
+  Both exited with 0.
+- Reporting the pre-registered labels (H1: Amendment C4; H2: A4/B2; H3: section 8/B1) and the tables to the user, without interpretation, citing each source file.
+- Scanning all new test CSVs for NaN/empty cells: none, apart from the structural blanks in `final_test/h3.csv`.
+
+**Team verification:**
+- [ ] Check the labels in `results/final_test/run_info.json` and `results/describe_test/h1.csv` against the rules in `analysis_plan.md`
+- [ ] Look at `figures/final_test/*.png` and `figures/failure_gallery_test_*.png`

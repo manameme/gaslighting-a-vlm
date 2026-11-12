@@ -1,0 +1,7 @@
+model,partition,subset,n_rows,universal_failures,share,images_with_failure
+qwen2vl_2b,test,all rows,10800,517,0.04787037037037037,105
+qwen2vl_2b,test,a1 correct,9420,0,0.0,0
+qwen2vl_2b,test,a1 wrong,1380,517,0.3746376811594203,105
+llava15_7b_fp16,test,all rows,10800,625,0.05787037037037037,107
+llava15_7b_fp16,test,a1 correct,9372,1,0.00010670081092616304,1
+llava15_7b_fp16,test,a1 wrong,1428,624,0.4369747899159664,106
