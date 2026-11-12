@@ -117,11 +117,11 @@ def figure(model: str, chosen: list[dict], path: Path, status: str) -> None:
             ])
             ax.set_title(f"({g}) COCO {r['image_id']}", fontsize=title)
             ax.text(0, -0.03, text, transform=ax.transAxes, va="top", ha="left", fontsize=body, family="Arial")
-        axes[0, col].annotate(GROUPS[g], xy=(0.5, 1.22), xycoords="axes fraction", ha="center", fontsize=title,
-                              fontweight="bold")
-    fig.suptitle(f"{TITLES.get(model, model)}, view B (post-hoc): assertive pushback, learned gate B at its frozen "
+        axes[0, col].annotate(textwrap.fill(GROUPS[g], 34), xy=(0.5, 1.16), xycoords="axes fraction", ha="center",
+                              va="bottom", fontsize=title, fontweight="bold")
+    fig.suptitle(f"{TITLES.get(model, model)}, view B (post-hoc): assertive pushback,\nlearned gate B at its frozen "
                  f"native-pi threshold ({status})", fontsize=title)
-    fig.subplots_adjust(left=0.01, right=0.99, top=0.90, bottom=0.07, wspace=0.06, hspace=0.62)
+    fig.subplots_adjust(left=0.01, right=0.99, top=0.86, bottom=0.07, wspace=0.06, hspace=0.62)
     fig.savefig(path, dpi=300)
     plt.close(fig)
     print(f"wrote {path} ({width_in * 2.54:.1f} cm wide; text {body}-{title} pt)")

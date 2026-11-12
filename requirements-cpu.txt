@@ -1,0 +1,11 @@
+# CPU-only environment (laptop): unit tests, gate fitting on dev, final/descriptive analyses,
+# figures and the ZIP. No GPU and no model weights are needed. Same versions as the TC1
+# environment (requirements-gpu.txt); verified in a fresh clone on 2026-11-12 (Python 3.13):
+#   python3 -m venv .venv && ./.venv/bin/pip install -r requirements-cpu.txt
+#   ./.venv/bin/python -m pytest -q        # 71 tests (3 skip without the POPE/COCO data)
+numpy==2.4.6
+pillow==13.0.0
+pyyaml==6.0.3
+scikit-learn==1.9.1
+matplotlib==3.11.2
+pytest==9.2.0

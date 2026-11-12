@@ -212,3 +212,16 @@ Record of what Claude Code was used for in each session and what the team verifi
   - All 7 final tables, `run_info.json`, the 6 descriptive tables, the 2 gallery CSVs and the 2 gallery PNGs are byte-identical to the committed ones.
   - The two `figures/final_test` PNGs differ only in rendering: TC1 has no Arial, so its figures use matplotlib's default font.
 - No code, config, threshold or rule was changed and no model inference was run. Item 6 (merge to `main`, ZIP, README runtimes) is on hold until the full number audit is done.
+
+## 2026-11-12: Number audit, blank-reliance file, gallery changes (post-hoc, presentation only), CPU requirements
+
+**Claude Code was used for:**
+- **Number audit:** every number in the report draft's Abstract, Results, Discussion and Appendix was checked against `results/` (`report/number_audit.md`, produced by `report/audit_numbers.py`).
+  - 363 items: 348 match. A negative control confirmed that deliberately wrong values are caught.
+  - 2 text mismatches: the Methods attributes the shift-gate reversal to Amendment A, but it is in §2 of the original plan; and the Discussion says "0.84 to 0.87" where the true range is 0.83 to 0.87.
+  - 5 wording notes ("headline gates"), and 7 external literature claims that cannot be traced to `results/`.
+- **`results/describe_test/blank_check.csv`:** a new, read-only file with the LLaVA and Qwen blank-image diagnostics.
+- **Failure gallery, both changes POST-HOC, PRESENTATION ONLY, and to be disclosed:**
+  1. `make_failure_gallery.py --a4-figures-only` redraws the pre-registered selection as 16 cm figures (2 × 3, text ≥ 6.5 pt) under new file names. It checks that the selection equals the committed CSV; the selection rule and CSV are unchanged.
+  2. `make_failure_gallery_b.py`: a second view chosen by the team after seeing the test results (assertive pushback, learned gate B at its frozen native-π threshold: three missed corrections and three blocked harmful flips, lowest question ids). Its rule was committed in the docstring (e0a7c08) before the first run. After that run the figure headers overlapped, so the first run's uncommitted outputs were removed and redrawn with the same rule; the CSV is byte-identical. In group (b) all three examples come from one image (COCO 310196), as three different questions; this follows from the rule.
+- **`requirements-cpu.txt`** (six pinned packages, as used in the fresh-clone check) and the README CPU steps.

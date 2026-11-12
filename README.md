@@ -24,14 +24,14 @@ A small open VLM answers a POPE yes/no question, the user pushes back, and we co
 All outputs go to `RESULTS_DIR` (environment variable, default `results/`). Inputs come from `DATA_DIR` (default `data/`).
 Run scripts append rows and force them to disk after every batch, take `--resume` to skip finished rows, and take `--shard k/n` (k from 0) so that n people can each run a disjoint part. Each shard writes `baseline_dev_<model>_shard<k>of<n>.jsonl`. `scripts/merge_shards.py --model <model>` merges them into `baseline_dev_<model>.jsonl` and reports missing shards, duplicates and conflicts.
 
-## Laptop setup (CPU tests only)
+## Laptop setup (CPU only)
 
 ```bash
 python3 -m venv .venv
-./.venv/bin/pip install numpy pyyaml pillow pytest
-./.venv/bin/pip install scikit-learn matplotlib   # for the gate analysis and figures
-./.venv/bin/python -m pytest -q          # 69 tests, a few seconds
+./.venv/bin/pip install -r requirements-cpu.txt   # numpy, pillow, pyyaml, scikit-learn, matplotlib, pytest (pinned)
+./.venv/bin/python -m pytest -q                  # 71 tests, a few seconds (3 skip if POPE/COCO data are not downloaded)
 ```
+This environment runs everything except model inference: the tests, the gate fitting on dev, the final and descriptive analyses of saved outputs, the figures, and the ZIP.
 
 ## Data preparation
 
@@ -127,7 +127,7 @@ All runtimes below were measured with SLURM accounting (`sacct`) on TC1 (one Tes
       --extra-index-url https://download.pytorch.org/whl/cu124
   ```
   `requirements-gpu.txt` pins every version: torch 2.6.0+cu124, transformers 4.57.6, accelerate 1.10.1, bitsandbytes 0.49.2, numpy 2.4.6, scikit-learn 1.9.1, matplotlib 3.11.2, and the rest. Each result file's `_meta` header also records the versions used.
-- **CPU (laptop; tests, gate analysis, figures):** `python3 -m venv .venv && ./.venv/bin/pip install numpy pyyaml pillow pytest scikit-learn matplotlib`, then `./.venv/bin/python -m pytest -q`. That runs 71 tests in about 5 s, with no GPU and no model weights (a mock model is used).
+- **CPU (laptop; tests, gate analysis, figures):** `python3 -m venv .venv && ./.venv/bin/pip install -r requirements-cpu.txt`, then `./.venv/bin/python -m pytest -q`. That runs 71 tests in about 5 s, with no GPU and no model weights (a mock model is used). `requirements-cpu.txt` pins the same versions as the GPU environment.
 
 ### 2. Data preparation
 ```bash
