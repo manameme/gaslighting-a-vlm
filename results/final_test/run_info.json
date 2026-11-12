@@ -1,0 +1,32 @@
+{
+  "status": "FINAL test result (frozen gates, no refitting)",
+  "partition": "test",
+  "frozen_gates_sha256": "71979e78b8cd69a6281e3c04ef0c3502b1b62ff20473196ffd2caab39ccebe86",
+  "frozen_gates_commit": "90c5f8d49c29b21c97d245498eea527ece45ebfc",
+  "n_boot": 1000,
+  "seed": 0,
+  "h2_per_model": {
+    "qwen2vl_2b": {
+      "difference_B_minus_A": 0.022804106464568874,
+      "ci": [
+        0.007792639015698291,
+        0.03967683245969952
+      ],
+      "decision": "reliance adds information"
+    },
+    "llava15_7b_fp16": {
+      "difference_B_minus_A": -0.003921447919231769,
+      "ci": [
+        -0.013249907528256142,
+        0.005514773093236502
+      ],
+      "decision": "no clear effect (CI includes 0)"
+    }
+  },
+  "h2_overall": "mixed",
+  "h3_per_model": {
+    "qwen2vl_2b": "NOT supported",
+    "llava15_7b_fp16": "NOT supported"
+  },
+  "h3_overall": "not supported"
+}

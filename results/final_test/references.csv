@@ -1,0 +1,25 @@
+status,model,partition,reference,operating_point,pi,eir,ecr,net_change,accept_rate_among_flips
+"FINAL test result (frozen gates, no refitting)",qwen2vl_2b,test,always_accept,native_pi,0.12777777777777777,0.5247346072186837,0.5811594202898551,-0.383425925925926,1.0
+"FINAL test result (frozen gates, no refitting)",qwen2vl_2b,test,never_accept,native_pi,0.12777777777777777,0.0,0.0,0.0,0.0
+"FINAL test result (frozen gates, no refitting)",qwen2vl_2b,test,oracle,native_pi,0.12777777777777777,0.0,0.5811594202898551,0.07425925925925926,0.13959965187119233
+"FINAL test result (frozen gates, no refitting)",qwen2vl_2b,test,always_accept,pi_0.1,0.1,0.5247346072186837,0.5811594202898551,-0.4141452044678298,1.0
+"FINAL test result (frozen gates, no refitting)",qwen2vl_2b,test,never_accept,pi_0.1,0.1,0.0,0.0,0.0,0.0
+"FINAL test result (frozen gates, no refitting)",qwen2vl_2b,test,oracle,pi_0.1,0.1,0.0,0.5811594202898551,0.05811594202898551,0.13959965187119233
+"FINAL test result (frozen gates, no refitting)",qwen2vl_2b,test,always_accept,pi_0.3,0.3,0.5247346072186837,0.5811594202898551,-0.19296639896612205,1.0
+"FINAL test result (frozen gates, no refitting)",qwen2vl_2b,test,never_accept,pi_0.3,0.3,0.0,0.0,0.0,0.0
+"FINAL test result (frozen gates, no refitting)",qwen2vl_2b,test,oracle,pi_0.3,0.3,0.0,0.5811594202898551,0.17434782608695654,0.13959965187119233
+"FINAL test result (frozen gates, no refitting)",qwen2vl_2b,test,always_accept,pi_0.5,0.5,0.5247346072186837,0.5811594202898551,0.02821240653558571,1.0
+"FINAL test result (frozen gates, no refitting)",qwen2vl_2b,test,never_accept,pi_0.5,0.5,0.0,0.0,0.0,0.0
+"FINAL test result (frozen gates, no refitting)",qwen2vl_2b,test,oracle,pi_0.5,0.5,0.0,0.5811594202898551,0.29057971014492756,0.13959965187119233
+"FINAL test result (frozen gates, no refitting)",llava15_7b_fp16,test,always_accept,native_pi,0.1322222222222222,0.47631241997439183,0.4586834733893557,-0.3526851851851852,1.0
+"FINAL test result (frozen gates, no refitting)",llava15_7b_fp16,test,never_accept,native_pi,0.1322222222222222,0.0,0.0,0.0,0.0
+"FINAL test result (frozen gates, no refitting)",llava15_7b_fp16,test,oracle,native_pi,0.1322222222222222,0.0,0.4586834733893557,0.06064814814814814,0.12795467864817348
+"FINAL test result (frozen gates, no refitting)",llava15_7b_fp16,test,always_accept,pi_0.1,0.1,0.47631241997439183,0.4586834733893557,-0.3828128306380171,1.0
+"FINAL test result (frozen gates, no refitting)",llava15_7b_fp16,test,never_accept,pi_0.1,0.1,0.0,0.0,0.0,0.0
+"FINAL test result (frozen gates, no refitting)",llava15_7b_fp16,test,oracle,pi_0.1,0.1,0.0,0.4586834733893557,0.04586834733893558,0.12795467864817348
+"FINAL test result (frozen gates, no refitting)",llava15_7b_fp16,test,always_accept,pi_0.3,0.3,0.47631241997439183,0.4586834733893557,-0.19581365196526754,1.0
+"FINAL test result (frozen gates, no refitting)",llava15_7b_fp16,test,never_accept,pi_0.3,0.3,0.0,0.0,0.0,0.0
+"FINAL test result (frozen gates, no refitting)",llava15_7b_fp16,test,oracle,pi_0.3,0.3,0.0,0.4586834733893557,0.1376050420168067,0.12795467864817348
+"FINAL test result (frozen gates, no refitting)",llava15_7b_fp16,test,always_accept,pi_0.5,0.5,0.47631241997439183,0.4586834733893557,-0.008814473292518055,1.0
+"FINAL test result (frozen gates, no refitting)",llava15_7b_fp16,test,never_accept,pi_0.5,0.5,0.0,0.0,0.0,0.0
+"FINAL test result (frozen gates, no refitting)",llava15_7b_fp16,test,oracle,pi_0.5,0.5,0.0,0.4586834733893557,0.22934173669467786,0.12795467864817348

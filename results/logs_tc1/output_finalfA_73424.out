@@ -1,0 +1,86 @@
+job=73424 part=A mode=final node=TC1N02 date=Wed Nov 11 01:09:38 PM +08 2026
+head=8269e4ff3f08a459246c94b27230733a5371189d tags=pre-final
+DATA_DIR=/tc1home/UG/manasi004/project/data  (pope: 3 files, images: 500)
+name, memory.total [MiB], driver_version
+Tesla V100-PCIE-32GB, 32768 MiB, 580.173.02
+..................................................s.ss.................  [100%]
+68 passed, 3 skipped in 5.18s
+run_final: partition=test out=/tc1home/UG/manasi004/final/results commit=8269e4ff3f08a459246c94b27230733a5371189d
+[qwen2vl_2b] base: 900 of 900 questions to run -> /tc1home/UG/manasi004/final/results/baseline_test_qwen2vl_2b.jsonl
+[baseline_test_qwen2vl_2b.jsonl] 40/900 questions this call, 0.85 s/question
+[baseline_test_qwen2vl_2b.jsonl] 80/900 questions this call, 1.09 s/question
+[baseline_test_qwen2vl_2b.jsonl] 120/900 questions this call, 1.00 s/question
+[baseline_test_qwen2vl_2b.jsonl] 160/900 questions this call, 1.06 s/question
+[baseline_test_qwen2vl_2b.jsonl] 200/900 questions this call, 1.01 s/question
+[baseline_test_qwen2vl_2b.jsonl] 240/900 questions this call, 1.06 s/question
+[baseline_test_qwen2vl_2b.jsonl] 280/900 questions this call, 1.03 s/question
+[baseline_test_qwen2vl_2b.jsonl] 320/900 questions this call, 1.07 s/question
+[baseline_test_qwen2vl_2b.jsonl] 360/900 questions this call, 1.04 s/question
+[baseline_test_qwen2vl_2b.jsonl] 400/900 questions this call, 1.07 s/question
+[baseline_test_qwen2vl_2b.jsonl] 440/900 questions this call, 1.05 s/question
+[baseline_test_qwen2vl_2b.jsonl] 480/900 questions this call, 1.05 s/question
+[baseline_test_qwen2vl_2b.jsonl] 520/900 questions this call, 1.03 s/question
+[baseline_test_qwen2vl_2b.jsonl] 560/900 questions this call, 1.02 s/question
+[baseline_test_qwen2vl_2b.jsonl] 600/900 questions this call, 1.01 s/question
+[baseline_test_qwen2vl_2b.jsonl] 640/900 questions this call, 1.00 s/question
+[baseline_test_qwen2vl_2b.jsonl] 680/900 questions this call, 0.99 s/question
+[baseline_test_qwen2vl_2b.jsonl] 720/900 questions this call, 0.98 s/question
+[baseline_test_qwen2vl_2b.jsonl] 760/900 questions this call, 0.97 s/question
+[baseline_test_qwen2vl_2b.jsonl] 800/900 questions this call, 0.97 s/question
+[baseline_test_qwen2vl_2b.jsonl] 840/900 questions this call, 0.96 s/question
+[baseline_test_qwen2vl_2b.jsonl] 880/900 questions this call, 0.95 s/question
+[qwen2vl_2b] degraded passes: 1800 to run -> /tc1home/UG/manasi004/final/results/turn1_degraded_test_qwen2vl_2b.jsonl
+degraded turn-1 passes: 1800 to do, 0 already done -> /tc1home/UG/manasi004/final/results/turn1_degraded_test_qwen2vl_2b.jsonl
+  8/1800  0.075 s/pass
+  168/1800  0.088 s/pass
+  328/1800  0.107 s/pass
+  488/1800  0.110 s/pass
+  648/1800  0.100 s/pass
+  808/1800  0.094 s/pass
+  968/1800  0.090 s/pass
+  1128/1800  0.086 s/pass
+  1288/1800  0.084 s/pass
+  1448/1800  0.082 s/pass
+  1608/1800  0.082 s/pass
+  1768/1800  0.081 s/pass
+[qwen2vl_2b] joined 10800 signal rows -> /tc1home/UG/manasi004/final/results/signals_test_qwen2vl_2b.jsonl
+[llava15_7b_fp16] base: 900 of 900 questions to run -> /tc1home/UG/manasi004/final/results/baseline_test_llava15_7b_fp16.jsonl
+[baseline_test_llava15_7b_fp16.jsonl] 40/900 questions this call, 1.92 s/question
+[baseline_test_llava15_7b_fp16.jsonl] 80/900 questions this call, 1.95 s/question
+[baseline_test_llava15_7b_fp16.jsonl] 120/900 questions this call, 1.98 s/question
+[baseline_test_llava15_7b_fp16.jsonl] 160/900 questions this call, 1.98 s/question
+[baseline_test_llava15_7b_fp16.jsonl] 200/900 questions this call, 1.97 s/question
+[baseline_test_llava15_7b_fp16.jsonl] 240/900 questions this call, 1.96 s/question
+[baseline_test_llava15_7b_fp16.jsonl] 280/900 questions this call, 1.95 s/question
+[baseline_test_llava15_7b_fp16.jsonl] 320/900 questions this call, 1.95 s/question
+[baseline_test_llava15_7b_fp16.jsonl] 360/900 questions this call, 2.00 s/question
+[baseline_test_llava15_7b_fp16.jsonl] 400/900 questions this call, 1.99 s/question
+[baseline_test_llava15_7b_fp16.jsonl] 440/900 questions this call, 2.02 s/question
+[baseline_test_llava15_7b_fp16.jsonl] 480/900 questions this call, 2.04 s/question
+[baseline_test_llava15_7b_fp16.jsonl] 520/900 questions this call, 2.06 s/question
+[baseline_test_llava15_7b_fp16.jsonl] 560/900 questions this call, 2.10 s/question
+[baseline_test_llava15_7b_fp16.jsonl] 600/900 questions this call, 2.11 s/question
+[baseline_test_llava15_7b_fp16.jsonl] 640/900 questions this call, 2.44 s/question
+[baseline_test_llava15_7b_fp16.jsonl] 680/900 questions this call, 2.52 s/question
+[baseline_test_llava15_7b_fp16.jsonl] 720/900 questions this call, 2.52 s/question
+[baseline_test_llava15_7b_fp16.jsonl] 760/900 questions this call, 2.51 s/question
+[baseline_test_llava15_7b_fp16.jsonl] 800/900 questions this call, 2.50 s/question
+[baseline_test_llava15_7b_fp16.jsonl] 840/900 questions this call, 2.47 s/question
+[baseline_test_llava15_7b_fp16.jsonl] 880/900 questions this call, 2.45 s/question
+[llava15_7b_fp16] degraded passes: 1800 to run -> /tc1home/UG/manasi004/final/results/turn1_degraded_test_llava15_7b_fp16.jsonl
+degraded turn-1 passes: 1800 to do, 0 already done -> /tc1home/UG/manasi004/final/results/turn1_degraded_test_llava15_7b_fp16.jsonl
+  8/1800  0.151 s/pass
+  168/1800  0.156 s/pass
+  328/1800  0.162 s/pass
+  488/1800  0.165 s/pass
+  648/1800  0.169 s/pass
+  808/1800  0.169 s/pass
+  968/1800  0.172 s/pass
+  1128/1800  0.170 s/pass
+  1288/1800  0.172 s/pass
+  1448/1800  0.171 s/pass
+  1608/1800  0.171 s/pass
+  1768/1800  0.171 s/pass
+[llava15_7b_fp16] joined 10800 signal rows -> /tc1home/UG/manasi004/final/results/signals_test_llava15_7b_fp16.jsonl
+steps ['base'] done; analysis not requested.
+done Wed Nov 11 02:08:37 PM +08 2026

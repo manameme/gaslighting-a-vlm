@@ -1,0 +1,5 @@
+status,model,partition,metric,gate_A,gate_B,difference_B_minus_A,ci_low,ci_high,decision,primary
+"FINAL test result (frozen gates, no refitting)",qwen2vl_2b,test,auroc_good_revision,0.8450704616165433,0.8678745680811122,0.022804106464568874,0.007792639015698291,0.03967683245969952,reliance adds information,True
+"FINAL test result (frozen gates, no refitting)",qwen2vl_2b,test,area,0.257708006400197,0.2646622203760116,0.006954213975814638,0.002325397017512247,0.01208327762059122,reliance adds information,False
+"FINAL test result (frozen gates, no refitting)",llava15_7b_fp16,test,auroc_good_revision,0.837262989411475,0.8333415414922433,-0.003921447919231769,-0.013249907528256142,0.005514773093236502,no clear effect (CI includes 0),True
+"FINAL test result (frozen gates, no refitting)",llava15_7b_fp16,test,area,0.18292240071444715,0.18206565596789295,-0.0008567447465542,-0.0030370378370305345,0.0011288379901288862,no clear effect (CI includes 0),False

@@ -131,3 +131,12 @@ Record of what Claude Code was used for in each session and what the team verifi
 - Bundling `main` and `pre-final`, cloning into a fresh `~/final` on TC1, and checking HEAD = tag, the clean tree, and that the `splits.json` and `frozen_gates.json` hashes match.
 - Submitting `bash slurm/submit_final.sh` at 2026-11-11 13:09:37 +08:00: job A 73424 (base + signals), job B 73425 (grounding, re-look, analysis; afterok on A).
 - No test outputs have been read. No code or config was changed after the tag; only this log and the overview were edited.
+
+## 2026-11-12: Test outputs copied back and committed (not interpreted)
+
+**Claude Code was used for:**
+- Checking the final jobs: job A 73424 and job B 73425 both COMPLETED with exit 0 and no errors.
+- Copying the 20 output files and 4 job logs from `~/final` on TC1 into a staging folder (read-only on TC1). sha256 is byte-identical to TC1.
+- Running integrity checks that print counts and headers only, no result values: full row counts, no duplicates, the 900 test questions with no dev overlap, headers = tag commit + frozen-gates hash, and the FINAL status on every table.
+- Committing them on `main`. No code was changed; `git diff pre-final..HEAD -- src configs slurm scripts` is empty on `main`.
+- No result has been read or interpreted yet.
