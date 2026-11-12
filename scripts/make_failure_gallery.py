@@ -145,6 +145,48 @@ def figure(model: str, chosen: list[dict], path: Path, status: str) -> None:
     print(f"wrote {path}")
 
 
+def figure_a4(model: str, chosen: list[dict], path: Path, status: str) -> None:
+    """Same examples, laid out for one A4 column: 2 columns x 3 rows, 16 cm wide, all text >= 6 pt.
+
+    Added 2026-11-12 after the test run, presentation only (the selection rule and the
+    CSV are unchanged; see AI_USE_LOG.md). Written as a new file; nothing is overwritten.
+    """
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from PIL import Image
+
+    width_in = 16 / 2.54
+    body, title = 6.5, 7.5                                 # points at the printed size
+    image_dir = data_dir() / load_yaml("configs/data.yaml")["image_dir"]
+    cols, rows_n = 2, int(np.ceil(len(chosen) / 2))
+    fig, axes = plt.subplots(rows_n, cols, figsize=(width_in, rows_n * 3.15))
+    axes = np.atleast_1d(axes).ravel()
+    for ax in axes:
+        ax.axis("off")
+    for ax, r in zip(axes, chosen):
+        img = Image.open(image_dir / f"COCO_val2014_{int(r['image_id']):012d}.jpg").convert("RGB")
+        img.thumbnail((900, 900))
+        ax.imshow(img)
+        q = f"Is there {article(r['object'])} {r['object']} in the image?"
+        text = "\n".join([
+            textwrap.fill(f"Q ({r['pope_split']}): {q} Truth: {r['label']}", 58),
+            textwrap.fill(f"User: \"{r['pushback_text']}\"", 58),
+            f"Turn 1: {r['a1']} (p_yes {r['p1_yes']:.2f}, {'right' if r['a1_correct'] else 'wrong'});"
+            f"  Turn 2: {r['a2']} (p_yes {r['p2_yes']:.2f}, {'flipped' if r['flip'] else 'kept'})",
+            f"Grounding a2: {r['grounding_a2']};  Re-look a2: {r['relook_a2']}",
+            f"Universal-failure rows on this image: {r['universal_failures_on_image']}",
+        ])
+        ax.set_title(f"COCO {r['image_id']}", fontsize=title)
+        ax.text(0, -0.03, text, transform=ax.transAxes, va="top", ha="left", fontsize=body, family="Arial")
+    fig.suptitle(f"{TITLES.get(model, model)}: failure cases ({status}); all 6 gates and both prompts wrong",
+                 fontsize=title)
+    fig.subplots_adjust(left=0.01, right=0.99, top=0.93, bottom=0.07, wspace=0.06, hspace=0.62)
+    fig.savefig(path, dpi=300)
+    plt.close(fig)
+    print(f"wrote {path} ({width_in * 2.54:.1f} cm wide; text {body}-{title} pt)")
+
+
 def write_csv(path: Path, rows: list[dict], overwrite_ok: bool) -> None:
     if path.exists() and not overwrite_ok:
         raise FileExistsError(f"{path} exists; test outputs are never overwritten.")
@@ -164,6 +206,9 @@ def main() -> None:
     parser.add_argument("--in-dir", type=Path, help="default RESULTS_DIR")
     parser.add_argument("--models", nargs="+", default=MODELS)
     parser.add_argument("--frozen", type=Path, default=REPO_ROOT / "results" / "frozen_gates.json")
+    parser.add_argument("--a4-figures-only", action="store_true",
+                        help="only draw the 16 cm (A4 column) figures as new files *_a4.png; write no CSV. "
+                             "The selection must equal the committed failure_gallery_<p>.csv")
     args = parser.parse_args()
     in_dir = args.in_dir or results_dir()
     overwrite_ok = args.partition == "dev"
@@ -181,10 +226,24 @@ def main() -> None:
                            "images_with_failure": len({r["image_id"] for r in sel if r["universal_failure"]})})
         chosen = select(rows)
         gallery += chosen
+        if args.a4_figures_only:
+            committed = [r for r in csv.DictReader(open(results_dir() / f"failure_gallery_{args.partition}.csv"))
+                         if r["model"] == m]
+            same = [(r["uid"], r["pushback_type"], str(r["paraphrase_id"])) for r in chosen] == \
+                   [(r["uid"], r["pushback_type"], r["paraphrase_id"]) for r in committed]
+            if not same:
+                sys.exit(f"{m}: selection differs from the committed CSV; refusing to draw.")
+            a4_path = REPO_ROOT / "figures" / f"failure_gallery_{args.partition}_{m}_a4.png"
+            if a4_path.exists():
+                sys.exit(f"{a4_path} exists; never overwritten.")
+            figure_a4(m, chosen, a4_path, status)
+            continue
         fig_path = REPO_ROOT / "figures" / f"failure_gallery_{args.partition}_{m}.png"
         if fig_path.exists() and not overwrite_ok:
             raise FileExistsError(f"{fig_path} exists")
         figure(m, chosen, fig_path, status)
+    if args.a4_figures_only:
+        return
     write_csv(results_dir() / f"failure_gallery_{args.partition}.csv", gallery, overwrite_ok)
     write_csv(results_dir() / f"failure_counts_{args.partition}.csv", counts, overwrite_ok)
 

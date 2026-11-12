@@ -1,0 +1,29 @@
+model,statistic,a1,unit,n,value,source
+qwen2vl_2b,p_yes_blank_min,all,question,900,0.21316531350824827,results/signals_test_qwen2vl_2b.jsonl
+qwen2vl_2b,p_yes_blank_median,all,question,900,0.4272760559981368,results/signals_test_qwen2vl_2b.jsonl
+qwen2vl_2b,p_yes_blank_max,all,question,900,0.6316590206171933,results/signals_test_qwen2vl_2b.jsonl
+qwen2vl_2b,p_yes_blank_sd,all,question,900,0.08024308308805429,results/signals_test_qwen2vl_2b.jsonl
+qwen2vl_2b,p_a1_blank_sd,yes,row (question x pushback),4524,0.07161487028989809,results/signals_test_qwen2vl_2b.jsonl
+qwen2vl_2b,conf1_sd,yes,row (question x pushback),4524,0.1264670664887255,results/signals_test_qwen2vl_2b.jsonl
+qwen2vl_2b,corr_conf1_p_a1_blank,yes,row (question x pushback),4524,-0.15813888839305187,results/signals_test_qwen2vl_2b.jsonl
+qwen2vl_2b,corr_conf1_reliance_blank,yes,row (question x pushback),4524,0.8896834983528141,results/signals_test_qwen2vl_2b.jsonl
+qwen2vl_2b,spearman_conf1_reliance_blank,yes,row (question x pushback),4524,0.7663785463541154,results/signals_test_qwen2vl_2b.jsonl
+qwen2vl_2b,p_a1_blank_sd,no,row (question x pushback),6276,0.08433432163161553,results/signals_test_qwen2vl_2b.jsonl
+qwen2vl_2b,conf1_sd,no,row (question x pushback),6276,0.10813139758312301,results/signals_test_qwen2vl_2b.jsonl
+qwen2vl_2b,corr_conf1_p_a1_blank,no,row (question x pushback),6276,0.01452123107589759,results/signals_test_qwen2vl_2b.jsonl
+qwen2vl_2b,corr_conf1_reliance_blank,no,row (question x pushback),6276,0.7851493096063058,results/signals_test_qwen2vl_2b.jsonl
+qwen2vl_2b,spearman_conf1_reliance_blank,no,row (question x pushback),6276,0.5914299747111478,results/signals_test_qwen2vl_2b.jsonl
+llava15_7b_fp16,p_yes_blank_min,all,question,900,0.010013555163127548,results/signals_test_llava15_7b_fp16.jsonl
+llava15_7b_fp16,p_yes_blank_median,all,question,900,0.0197191041727656,results/signals_test_llava15_7b_fp16.jsonl
+llava15_7b_fp16,p_yes_blank_max,all,question,900,0.055823114720725625,results/signals_test_llava15_7b_fp16.jsonl
+llava15_7b_fp16,p_yes_blank_sd,all,question,900,0.005589816021015054,results/signals_test_llava15_7b_fp16.jsonl
+llava15_7b_fp16,p_a1_blank_sd,yes,row (question x pushback),4836,0.006181350433922729,results/signals_test_llava15_7b_fp16.jsonl
+llava15_7b_fp16,conf1_sd,yes,row (question x pushback),4836,0.13157148586232467,results/signals_test_llava15_7b_fp16.jsonl
+llava15_7b_fp16,corr_conf1_p_a1_blank,yes,row (question x pushback),4836,-0.16141970041642434,results/signals_test_llava15_7b_fp16.jsonl
+llava15_7b_fp16,corr_conf1_reliance_blank,yes,row (question x pushback),4836,0.9989429494225918,results/signals_test_llava15_7b_fp16.jsonl
+llava15_7b_fp16,spearman_conf1_reliance_blank,yes,row (question x pushback),4836,0.9868454521313463,results/signals_test_llava15_7b_fp16.jsonl
+llava15_7b_fp16,p_a1_blank_sd,no,row (question x pushback),5964,0.005036427518239838,results/signals_test_llava15_7b_fp16.jsonl
+llava15_7b_fp16,conf1_sd,no,row (question x pushback),5964,0.12186825135328477,results/signals_test_llava15_7b_fp16.jsonl
+llava15_7b_fp16,corr_conf1_p_a1_blank,no,row (question x pushback),5964,0.09272337083327026,results/signals_test_llava15_7b_fp16.jsonl
+llava15_7b_fp16,corr_conf1_reliance_blank,no,row (question x pushback),5964,0.9991479532273364,results/signals_test_llava15_7b_fp16.jsonl
+llava15_7b_fp16,spearman_conf1_reliance_blank,no,row (question x pushback),5964,0.9927832929188335,results/signals_test_llava15_7b_fp16.jsonl
