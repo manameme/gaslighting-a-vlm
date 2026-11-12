@@ -253,7 +253,7 @@ How to read it:
 - **The mitigations are drawn as hollow markers on `figures/eir_ecr_dev.png`.** They change the model's turn-2 answers, so they are *not* bounded by the base run's oracle ceiling; LLaVA re-look lies above it.
 - **Instruction-placement check:** without "Answer yes or no." in the pushback, the turn-2 yes/no mass collapses (Qwen mean 0.30, minimum 0.000; LLaVA mean 0.58, minimum 0.033). So the no-suffix turn-2 answers are mostly read from a small share of the probability, and their apparent changes are not trustworthy. LLaVA's turn-2 accuracy of 0.597, for example, is partly an artefact of reading answers the model didn't really give. This confirms the pilot decision to repeat the instruction. It also means **conclusions about flip behaviour depend on where the answer-format instruction is placed**, which is worth stating as a limitation.
 
-### 5.10 Phase 7: tagged and submitted (test run in progress)
+### 5.10 Phase 7: test run completed; outputs committed (not yet read or interpreted)
 **Headline choices** (`analysis_plan.md`, Amendment A, committed c043521 before any final-run code):
 - **Headline gates:** the confidence threshold gate; learned A (conf1 + shift + pushback type); learned B (A + blur and blank reliance). Blur, blank and shift single-signal gates are secondary.
 - **References on every table and plot:** always-accept, never-accept, a **matched random gate** (same acceptance rate among flips), and the oracle with its ceiling.
@@ -268,7 +268,17 @@ How to read it:
   - **job A = 73424** (base + signals, both models), started on TC1N02;
   - **job B = 73425** (grounding, re-look, analysis), waiting on A.
 - **Rules from here:** no reruns and no changed settings. A failed job is reported and waits for a team decision. Analysis-script failures follow Note C.
-- **Test results:** not read yet.
+- **Completed:**
+  - **job A 73424:** COMPLETED, exit 0, 59 min 00 s (11 Nov 13:09–14:08);
+  - **job B 73425:** COMPLETED, exit 0, 2 h 04 min 46 s (14:08–16:13).
+
+  No errors in either error log.
+- **Copied back 12 Nov:** all 20 output files are byte-identical to TC1 (sha256), and the integrity checks pass:
+  - full row counts and no duplicates;
+  - exactly the 900 test questions, with no dev overlap;
+  - every header carries tag commit `8269e4f`, `pre-final`, the frozen-gates hash and `partition=test`;
+  - all `results/final_test/` tables are marked "FINAL test result".
+- **Test results:** committed, but not yet read or interpreted.
 
 **Combining the two models** (`analysis_plan.md`, Amendment B, commit 0e7d3ff). Per-model results are always reported next to the overall label.
 - **H2:**

@@ -1,0 +1,31 @@
+status,model,partition,row,gate,pope_split,value,ci_low,ci_high
+"FINAL test result (frozen gates, no refitting)",qwen2vl_2b,test,split_auroc,conf_gate,random,0.8807522996867987,0.823914756272837,0.9271951944803943
+"FINAL test result (frozen gates, no refitting)",qwen2vl_2b,test,split_auroc,conf_gate,popular,0.7282837810777484,0.6415741465214909,0.8063178414949225
+"FINAL test result (frozen gates, no refitting)",qwen2vl_2b,test,split_auroc,conf_gate,adversarial,0.7973425836305538,0.722043159189826,0.8592634105627133
+"FINAL test result (frozen gates, no refitting)",qwen2vl_2b,test,split_auroc,learned_A_conf_shift,random,0.9197637426323707,0.8815320093614282,0.951631279394218
+"FINAL test result (frozen gates, no refitting)",qwen2vl_2b,test,split_auroc,learned_A_conf_shift,popular,0.7950370456246114,0.7317510911369378,0.8592162727273573
+"FINAL test result (frozen gates, no refitting)",qwen2vl_2b,test,split_auroc,learned_A_conf_shift,adversarial,0.8227118441813288,0.7582674241896126,0.8813176342067952
+"FINAL test result (frozen gates, no refitting)",qwen2vl_2b,test,split_auroc,learned_B_conf_shift_reliance,random,0.9266103972970974,0.8896043427118895,0.9617784723069119
+"FINAL test result (frozen gates, no refitting)",qwen2vl_2b,test,split_auroc,learned_B_conf_shift_reliance,popular,0.8576957937670605,0.8007234536777378,0.9099660247885855
+"FINAL test result (frozen gates, no refitting)",qwen2vl_2b,test,split_auroc,learned_B_conf_shift_reliance,adversarial,0.8358911974118615,0.767907839364894,0.8981264703806844
+"FINAL test result (frozen gates, no refitting)",qwen2vl_2b,test,split_auroc,reliance_blur_gate,random,0.8425978445830969,0.7386243891520954,0.9291598650137614
+"FINAL test result (frozen gates, no refitting)",qwen2vl_2b,test,split_auroc,reliance_blur_gate,popular,0.8575297998587734,0.8033494817596861,0.9099932624229172
+"FINAL test result (frozen gates, no refitting)",qwen2vl_2b,test,split_auroc,reliance_blur_gate,adversarial,0.7186857771708145,0.6239762030579155,0.8132738541525184
+"FINAL test result (frozen gates, no refitting)",qwen2vl_2b,test,conf_gate_adv_minus_random,,,-0.08340971605624492,-0.1701780165395322,0.004627198407073357
+"FINAL test result (frozen gates, no refitting)",qwen2vl_2b,test,did_blur_minus_conf,,,-0.040502351356037525,-0.18340739449400148,0.09542391946343132
+"FINAL test result (frozen gates, no refitting)",qwen2vl_2b,test,verdict,NOT supported,,,,
+"FINAL test result (frozen gates, no refitting)",llava15_7b_fp16,test,split_auroc,conf_gate,random,0.8679910616960976,0.8055525430067315,0.9175660065467699
+"FINAL test result (frozen gates, no refitting)",llava15_7b_fp16,test,split_auroc,conf_gate,popular,0.8275693338641189,0.7679260156895781,0.8786450519474003
+"FINAL test result (frozen gates, no refitting)",llava15_7b_fp16,test,split_auroc,conf_gate,adversarial,0.7941046255869706,0.6950391174411835,0.8701626514623684
+"FINAL test result (frozen gates, no refitting)",llava15_7b_fp16,test,split_auroc,learned_A_conf_shift,random,0.8880150425114454,0.833526712468299,0.9316237647364215
+"FINAL test result (frozen gates, no refitting)",llava15_7b_fp16,test,split_auroc,learned_A_conf_shift,popular,0.847877410651097,0.7961446386074859,0.8906225310417814
+"FINAL test result (frozen gates, no refitting)",llava15_7b_fp16,test,split_auroc,learned_A_conf_shift,adversarial,0.7878475313090209,0.7001680828816584,0.8626873203939801
+"FINAL test result (frozen gates, no refitting)",llava15_7b_fp16,test,split_auroc,learned_B_conf_shift_reliance,random,0.8969042947460214,0.8454450560532134,0.9369329965101266
+"FINAL test result (frozen gates, no refitting)",llava15_7b_fp16,test,split_auroc,learned_B_conf_shift_reliance,popular,0.8365263402335457,0.7801586257134805,0.8835424956245957
+"FINAL test result (frozen gates, no refitting)",llava15_7b_fp16,test,split_auroc,learned_B_conf_shift_reliance,adversarial,0.7828432688548834,0.6926691610017054,0.8625091321839524
+"FINAL test result (frozen gates, no refitting)",llava15_7b_fp16,test,split_auroc,reliance_blur_gate,random,0.737410071942446,0.6159527253997686,0.856984379307685
+"FINAL test result (frozen gates, no refitting)",llava15_7b_fp16,test,split_auroc,reliance_blur_gate,popular,0.7354006325194621,0.6566033905517963,0.8076532537701291
+"FINAL test result (frozen gates, no refitting)",llava15_7b_fp16,test,split_auroc,reliance_blur_gate,adversarial,0.679072527658853,0.6005880153527011,0.7533739105292047
+"FINAL test result (frozen gates, no refitting)",llava15_7b_fp16,test,conf_gate_adv_minus_random,,,-0.07388643610912704,-0.18869665950951503,0.03278170895053236
+"FINAL test result (frozen gates, no refitting)",llava15_7b_fp16,test,did_blur_minus_conf,,,0.015548891825533984,-0.1750377538546912,0.20727983460176058
+"FINAL test result (frozen gates, no refitting)",llava15_7b_fp16,test,verdict,NOT supported,,,,

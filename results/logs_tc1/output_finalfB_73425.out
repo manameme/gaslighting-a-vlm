@@ -1,0 +1,118 @@
+job=73425 part=B mode=final node=TC1N02 date=Wed Nov 11 02:08:40 PM +08 2026
+head=8269e4ff3f08a459246c94b27230733a5371189d tags=pre-final
+DATA_DIR=/tc1home/UG/manasi004/project/data  (pope: 3 files, images: 500)
+name, memory.total [MiB], driver_version
+Tesla V100-PCIE-32GB, 32768 MiB, 580.173.02
+..................................................s.ss.................  [100%]
+68 passed, 3 skipped in 11.58s
+run_final: partition=test out=/tc1home/UG/manasi004/final/results commit=8269e4ff3f08a459246c94b27230733a5371189d
+[qwen2vl_2b] grounding: 900 of 900 questions to run -> /tc1home/UG/manasi004/final/results/grounding_test_qwen2vl_2b.jsonl
+[grounding_test_qwen2vl_2b.jsonl] 40/900 questions this call, 0.85 s/question
+[grounding_test_qwen2vl_2b.jsonl] 80/900 questions this call, 0.84 s/question
+[grounding_test_qwen2vl_2b.jsonl] 120/900 questions this call, 0.84 s/question
+[grounding_test_qwen2vl_2b.jsonl] 160/900 questions this call, 0.84 s/question
+[grounding_test_qwen2vl_2b.jsonl] 200/900 questions this call, 0.84 s/question
+[grounding_test_qwen2vl_2b.jsonl] 240/900 questions this call, 0.84 s/question
+[grounding_test_qwen2vl_2b.jsonl] 280/900 questions this call, 0.84 s/question
+[grounding_test_qwen2vl_2b.jsonl] 320/900 questions this call, 0.84 s/question
+[grounding_test_qwen2vl_2b.jsonl] 360/900 questions this call, 0.85 s/question
+[grounding_test_qwen2vl_2b.jsonl] 400/900 questions this call, 0.84 s/question
+[grounding_test_qwen2vl_2b.jsonl] 440/900 questions this call, 0.84 s/question
+[grounding_test_qwen2vl_2b.jsonl] 480/900 questions this call, 0.85 s/question
+[grounding_test_qwen2vl_2b.jsonl] 520/900 questions this call, 0.84 s/question
+[grounding_test_qwen2vl_2b.jsonl] 560/900 questions this call, 0.84 s/question
+[grounding_test_qwen2vl_2b.jsonl] 600/900 questions this call, 0.84 s/question
+[grounding_test_qwen2vl_2b.jsonl] 640/900 questions this call, 0.84 s/question
+[grounding_test_qwen2vl_2b.jsonl] 680/900 questions this call, 0.84 s/question
+[grounding_test_qwen2vl_2b.jsonl] 720/900 questions this call, 0.84 s/question
+[grounding_test_qwen2vl_2b.jsonl] 760/900 questions this call, 0.84 s/question
+[grounding_test_qwen2vl_2b.jsonl] 800/900 questions this call, 0.84 s/question
+[grounding_test_qwen2vl_2b.jsonl] 840/900 questions this call, 0.84 s/question
+[grounding_test_qwen2vl_2b.jsonl] 880/900 questions this call, 0.84 s/question
+[qwen2vl_2b] relook: 900 of 900 questions to run -> /tc1home/UG/manasi004/final/results/relook_test_qwen2vl_2b.jsonl
+[relook_test_qwen2vl_2b.jsonl] 40/900 questions this call, 1.48 s/question
+[relook_test_qwen2vl_2b.jsonl] 80/900 questions this call, 1.47 s/question
+[relook_test_qwen2vl_2b.jsonl] 120/900 questions this call, 1.47 s/question
+[relook_test_qwen2vl_2b.jsonl] 160/900 questions this call, 1.48 s/question
+[relook_test_qwen2vl_2b.jsonl] 200/900 questions this call, 1.49 s/question
+[relook_test_qwen2vl_2b.jsonl] 240/900 questions this call, 1.49 s/question
+[relook_test_qwen2vl_2b.jsonl] 280/900 questions this call, 1.49 s/question
+[relook_test_qwen2vl_2b.jsonl] 320/900 questions this call, 1.50 s/question
+[relook_test_qwen2vl_2b.jsonl] 360/900 questions this call, 1.50 s/question
+[relook_test_qwen2vl_2b.jsonl] 400/900 questions this call, 1.50 s/question
+[relook_test_qwen2vl_2b.jsonl] 440/900 questions this call, 1.50 s/question
+[relook_test_qwen2vl_2b.jsonl] 480/900 questions this call, 1.50 s/question
+[relook_test_qwen2vl_2b.jsonl] 520/900 questions this call, 1.50 s/question
+[relook_test_qwen2vl_2b.jsonl] 560/900 questions this call, 1.50 s/question
+[relook_test_qwen2vl_2b.jsonl] 600/900 questions this call, 1.50 s/question
+[relook_test_qwen2vl_2b.jsonl] 640/900 questions this call, 1.50 s/question
+[relook_test_qwen2vl_2b.jsonl] 680/900 questions this call, 1.50 s/question
+[relook_test_qwen2vl_2b.jsonl] 720/900 questions this call, 1.51 s/question
+[relook_test_qwen2vl_2b.jsonl] 760/900 questions this call, 1.51 s/question
+[relook_test_qwen2vl_2b.jsonl] 800/900 questions this call, 1.51 s/question
+[relook_test_qwen2vl_2b.jsonl] 840/900 questions this call, 1.51 s/question
+[relook_test_qwen2vl_2b.jsonl] 880/900 questions this call, 1.51 s/question
+[llava15_7b_fp16] grounding: 900 of 900 questions to run -> /tc1home/UG/manasi004/final/results/grounding_test_llava15_7b_fp16.jsonl
+[grounding_test_llava15_7b_fp16.jsonl] 40/900 questions this call, 2.04 s/question
+[grounding_test_llava15_7b_fp16.jsonl] 80/900 questions this call, 2.02 s/question
+[grounding_test_llava15_7b_fp16.jsonl] 120/900 questions this call, 2.04 s/question
+[grounding_test_llava15_7b_fp16.jsonl] 160/900 questions this call, 2.05 s/question
+[grounding_test_llava15_7b_fp16.jsonl] 200/900 questions this call, 2.05 s/question
+[grounding_test_llava15_7b_fp16.jsonl] 240/900 questions this call, 2.05 s/question
+[grounding_test_llava15_7b_fp16.jsonl] 280/900 questions this call, 2.04 s/question
+[grounding_test_llava15_7b_fp16.jsonl] 320/900 questions this call, 2.04 s/question
+[grounding_test_llava15_7b_fp16.jsonl] 360/900 questions this call, 2.04 s/question
+[grounding_test_llava15_7b_fp16.jsonl] 400/900 questions this call, 2.04 s/question
+[grounding_test_llava15_7b_fp16.jsonl] 440/900 questions this call, 2.04 s/question
+[grounding_test_llava15_7b_fp16.jsonl] 480/900 questions this call, 2.04 s/question
+[grounding_test_llava15_7b_fp16.jsonl] 520/900 questions this call, 2.04 s/question
+[grounding_test_llava15_7b_fp16.jsonl] 560/900 questions this call, 2.04 s/question
+[grounding_test_llava15_7b_fp16.jsonl] 600/900 questions this call, 2.04 s/question
+[grounding_test_llava15_7b_fp16.jsonl] 640/900 questions this call, 2.04 s/question
+[grounding_test_llava15_7b_fp16.jsonl] 680/900 questions this call, 2.03 s/question
+[grounding_test_llava15_7b_fp16.jsonl] 720/900 questions this call, 2.03 s/question
+[grounding_test_llava15_7b_fp16.jsonl] 760/900 questions this call, 2.03 s/question
+[grounding_test_llava15_7b_fp16.jsonl] 800/900 questions this call, 2.03 s/question
+[grounding_test_llava15_7b_fp16.jsonl] 840/900 questions this call, 2.03 s/question
+[grounding_test_llava15_7b_fp16.jsonl] 880/900 questions this call, 2.03 s/question
+[llava15_7b_fp16] relook: 900 of 900 questions to run -> /tc1home/UG/manasi004/final/results/relook_test_llava15_7b_fp16.jsonl
+[relook_test_llava15_7b_fp16.jsonl] 40/900 questions this call, 3.78 s/question
+[relook_test_llava15_7b_fp16.jsonl] 80/900 questions this call, 3.77 s/question
+[relook_test_llava15_7b_fp16.jsonl] 120/900 questions this call, 3.76 s/question
+[relook_test_llava15_7b_fp16.jsonl] 160/900 questions this call, 3.76 s/question
+[relook_test_llava15_7b_fp16.jsonl] 200/900 questions this call, 3.76 s/question
+[relook_test_llava15_7b_fp16.jsonl] 240/900 questions this call, 3.76 s/question
+[relook_test_llava15_7b_fp16.jsonl] 280/900 questions this call, 3.76 s/question
+[relook_test_llava15_7b_fp16.jsonl] 320/900 questions this call, 3.76 s/question
+[relook_test_llava15_7b_fp16.jsonl] 360/900 questions this call, 3.76 s/question
+[relook_test_llava15_7b_fp16.jsonl] 400/900 questions this call, 3.76 s/question
+[relook_test_llava15_7b_fp16.jsonl] 440/900 questions this call, 3.76 s/question
+[relook_test_llava15_7b_fp16.jsonl] 480/900 questions this call, 3.76 s/question
+[relook_test_llava15_7b_fp16.jsonl] 520/900 questions this call, 3.76 s/question
+[relook_test_llava15_7b_fp16.jsonl] 560/900 questions this call, 3.76 s/question
+[relook_test_llava15_7b_fp16.jsonl] 600/900 questions this call, 3.76 s/question
+[relook_test_llava15_7b_fp16.jsonl] 640/900 questions this call, 3.76 s/question
+[relook_test_llava15_7b_fp16.jsonl] 680/900 questions this call, 3.76 s/question
+[relook_test_llava15_7b_fp16.jsonl] 720/900 questions this call, 3.76 s/question
+[relook_test_llava15_7b_fp16.jsonl] 760/900 questions this call, 3.76 s/question
+[relook_test_llava15_7b_fp16.jsonl] 800/900 questions this call, 3.76 s/question
+[relook_test_llava15_7b_fp16.jsonl] 840/900 questions this call, 3.76 s/question
+[relook_test_llava15_7b_fp16.jsonl] 880/900 questions this call, 3.76 s/question
+analysed qwen2vl_2b: 10800 rows
+analysed llava15_7b_fp16: 10800 rows
+wrote /tc1home/UG/manasi004/final/results/final_test/gates.csv (48 rows)
+wrote /tc1home/UG/manasi004/final/results/final_test/references.csv (24 rows)
+wrote /tc1home/UG/manasi004/final/results/final_test/auroc.csv (12 rows)
+wrote /tc1home/UG/manasi004/final/results/final_test/h2.csv (4 rows)
+wrote /tc1home/UG/manasi004/final/results/final_test/h3.csv (30 rows)
+wrote /tc1home/UG/manasi004/final/results/final_test/mitigations.csv (4 rows)
+wrote /tc1home/UG/manasi004/final/results/final_test/by_a1.csv (28 rows)
+wrote figures to /tc1home/UG/manasi004/final/figures/final_test
+H2 per model (B - A, frozen gates):
+  qwen2vl_2b: +0.023 [+0.008, +0.040] -> reliance adds information
+  llava15_7b_fp16: -0.004 [-0.013, +0.006] -> no clear effect (CI includes 0)
+H2 overall (Amendment B2): mixed
+H3 per model: {'qwen2vl_2b': 'NOT supported', 'llava15_7b_fp16': 'NOT supported'}
+H3 overall (Amendment B1): not supported
+Final run complete. Copy results/ and figures/final_test/ back and commit them. Do not re-run.
+done Wed Nov 11 04:13:24 PM +08 2026

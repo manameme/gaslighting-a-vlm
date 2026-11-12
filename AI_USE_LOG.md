@@ -175,3 +175,11 @@ Record of what Claude Code was used for in each session and what the team verifi
 - `AI_USE_LOG.md`, `PROJECT_OVERVIEW.md` and `make_figures.py` were hand edits in that commit.
 - **The `signals_dev_*.jsonl` files at 92c8c6a are TC1's original GPU-job outputs** (header commit fb22212). They replaced a locally re-joined copy whose rows differed only in that floating-point rounding. The frozen gates were fit later, on these committed files. Not stale; recorded for completeness.
 - **No other stale file was found.**
+## 2026-11-12: Test outputs copied back and committed (not interpreted)
+
+**Claude Code was used for:**
+- Checking the final jobs: job A 73424 and job B 73425 both COMPLETED with exit 0 and no errors.
+- Copying the 20 output files and 4 job logs from `~/final` on TC1 into a staging folder (read-only on TC1). sha256 is byte-identical to TC1.
+- Running integrity checks that print counts and headers only, no result values: full row counts, no duplicates, the 900 test questions with no dev overlap, headers = tag commit + frozen-gates hash, and the FINAL status on every table.
+- Committing them on `main`. No code was changed; `git diff pre-final..HEAD -- src configs slurm scripts` is empty on `main`.
+- No result has been read or interpreted yet.
